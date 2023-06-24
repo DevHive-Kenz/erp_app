@@ -18,7 +18,7 @@ class AuthInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final listOfPaths = <String>[
-
+        '${AppAPI.baseUrl}/api/login/'
     ];
     if (listOfPaths.contains(options.path.toString())) {
       return handler.next(options);
@@ -26,7 +26,7 @@ class AuthInterceptor extends Interceptor {
 
     final token = await cacheService.readCache(key: AppStrings.token);
     // print(" tokens: $token");
-    options.headers.addAll({'Authorization': 'token ${AppAPI.apiKey}:$token'});
+    options.headers.addAll({'Authorization': 'token $token'});
     // options.headers['Authorization'] = 'Bearer $token';
 
     return handler.next(options);
@@ -40,7 +40,7 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if ((err.response?.statusCode == 401 &&
-        err.response?.data["message"] == "Session Expired, Please Login Again")) {
+        err.response!.data["detail"].toString().contains("Invalid token"))) {
       // print("Token expired ");
       accessToken = null;
       cacheService.deleteCache();
@@ -48,7 +48,7 @@ class AuthInterceptor extends Interceptor {
       const SnackBar snackBar = SnackBar(
           backgroundColor: Colors.red, content: Text("Session Expired"));
       snackbarKey.currentState?.showSnackBar(snackBar);
-      // navigatorKey.currentState!.pushNamedAndRemoveUntil(loginRoute, (route) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(loginRoute, (route) => false);
       // if (await refreshToken()) {
       //   print("Token expired checked");
       //   return handler.resolve(await _retry(err.requestOptions));

@@ -1,64 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:kenz_app/constants/font_manager.dart';
 
 import '../../constants/color_manger.dart';
+import '../../constants/style_manager.dart';
 
 
-class RoundedButtonWidget extends StatelessWidget {
+class CustomButton extends StatelessWidget {
+  const CustomButton({Key? key,
+    required this.onTap,
+    this.height =60,
+    this.width =200,
+
+    this.color ,
+    this.isCancel,
+    required this.title}) : super(key: key);
+  final void Function()? onTap;
   final String title;
-  final VoidCallback? function;
-  final bool isError;
-  const RoundedButtonWidget({
-    Key? key,this.title="Button Name",@required this.function,this.isError=false
-  }) : super(key: key);
+  final Color? color;
+  final double height;
+  final double width;
+  final bool? isCancel;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: function!,
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all<
-            RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(36.0),
-          ),
-        ),
-        elevation: MaterialStateProperty.all(0.0),
-        padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 0),
-        ),
-      ),
-      child: Ink(
-        decoration:  BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                isError ?  ColorManager.primaryLight : ColorManager.primaryLight ,
-                isError ?  ColorManager.onPrimaryLight:  ColorManager.onPrimaryLight
-              ]),
-          borderRadius:
-          const BorderRadius.all(Radius.circular(36.0)),
-        ),
+    return InkWell(
+        onTap: onTap,
         child: Container(
-          constraints:  BoxConstraints(
-
-              minHeight: 60.0.h), // min sizes for Material buttons
-          alignment: Alignment.center,
-          child:  Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                fontSize: FontSize.s18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),),
-          ),
-        ),
-      ),
+            height: height.h,
+            width:width.w,
+            decoration: BoxDecoration(
+              gradient:  LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                   ColorManager.primaryLight,
+                   ColorManager.onPrimaryLight
+                ],
+              ),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Center(
+              child: Text(title,
+                  textAlign: TextAlign.center,
+                  style: getBoldStyle(
+                      color: ColorManager.white, fontSize: FontSize.s16)),
+            ),
+            ),
     );
-  }
+    }
 }

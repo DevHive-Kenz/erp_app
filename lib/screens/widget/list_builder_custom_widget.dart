@@ -11,9 +11,13 @@ class ListBuilderCustomWidget extends StatelessWidget {
 
 
   const ListBuilderCustomWidget({
-    Key? key,
+    Key? key,required this.title,required this.documentNumber,this.expiry,required this.onTap,required this.onEditTap
   }) : super(key: key);
-
+final String title;
+final String documentNumber;
+final String? expiry;
+final Function()? onTap;
+final Function()? onEditTap;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,16 +43,16 @@ class ListBuilderCustomWidget extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Licence",style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s16) ,),
-                  Text("7896 5413 5651 5356 2",style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,),
-                  Text("Expiry 10-02-2025",style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,),
+                  Text(title,style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s16) ,),
+                  Text(documentNumber,style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,),
+                 expiry != null ? Text("Expiry $expiry",style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,):kSizedBox,
                 ],
               ),
 
             ],
           ),
 
-          IconButton(onPressed: (){}, icon: Icon(Icons.edit,color: ColorManager.grey3,))
+          IconButton(onPressed: onEditTap, icon: Icon(Icons.edit,color: ColorManager.grey3,))
 
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/core/interceptor/retry_interceptor.dart';
 
 import '../../constants/api_const/api_const.dart';
@@ -23,13 +24,13 @@ class Api {
     var dio = Dio();
     dio.options.baseUrl = AppAPI.baseUrl;
     dio.interceptors
-    // ..add(LogInterceptor(
-    //     responseBody: true,
-    //     error: true,
-    //     requestHeader: false,
-    //     responseHeader: false,
-    //     request: false,
-    //     requestBody: true))
+    ..add(LogInterceptor(
+        responseBody: true,
+        error: true,
+        requestHeader: false,
+        responseHeader: false,
+        request: false,
+        requestBody: true))
       ..add(AuthInterceptor(dio))
       ..add(AppInterceptors(dio))
       ..add(
@@ -62,7 +63,11 @@ class AppInterceptors extends Interceptor {
             snackbarKey.currentState?.showSnackBar(snackBar);
             throw BadRequestException(err.requestOptions);
           case 401:
-            throw UnauthorizedException(err.requestOptions);
+             SnackBar snackBar = SnackBar(
+                backgroundColor: Colors.red, content: Text( err.response!.data["error"].toString(),style: getRegularStyle(color: Colors.white),));
+             snackbarKey.currentState?.showSnackBar(snackBar);
+
+             throw UnauthorizedException(err.requestOptions);
           case 404:
             throw NotFoundException(err.requestOptions);
           case 409:

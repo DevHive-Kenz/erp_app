@@ -7,7 +7,10 @@ import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/notifier/auth/auth_notifier.dart';
+import '../widget/Circular_progress_indicator_widget.dart';
 import '../widget/rounded_button_widget.dart';
 class LoginScreen extends HookWidget {
 
@@ -41,21 +44,29 @@ class LoginScreen extends HookWidget {
                     Text("Hello 👋",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s30) ),
                     Text("Welcome !",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s28) ),
                   kSizedBox50,
-                     AuthTextField(userController: userController,title: "Enter User Name",),
+                     AuthTextField(userController: userController,title: "Enter User Name",isPassword: false),
                       kSizedBox20,
-                      AuthTextField(userController: passController,title: "Enter Password",),
+                      AuthTextField(userController: passController,title: "Enter Password",isPassword: true,),
                       kSizedBox10,
                       Align(
                           alignment: Alignment.centerRight,
                           child: Text("Forgot password",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s16) )),
                       kSizedBox35,
 
-                      RoundedButtonWidget(
-                        title: "Login",
-                        function: (){
-                          Navigator.pushNamed(context, mainRoute);
-                        },
+                      Center(
+                        child: Consumer<AuthNotifier>(
 
+                          builder: (context, snapshot,_) {
+                            return snapshot.getIsLoading ? const CircularProgressIndicatorWidget() : CustomButton(
+                              title: "Login",
+                              onTap: (){
+                                snapshot.getLogin(context: context, username:userController.text, password: passController.text);
+                                // Navigator.pushReplacementNamed(context, mainRoute);
+
+                              },
+                            );
+                          }
+                        ),
                       )
 
                     ],
@@ -71,21 +82,26 @@ class LoginScreen extends HookWidget {
   }
 }
 
-class AuthTextField extends StatelessWidget {
+class AuthTextField extends HookWidget {
   const AuthTextField({
     Key? key,
-
     required this.userController,
     required this.title,
+    required this.isPassword,
   }) : super(key: key);
 
   final TextEditingController userController;
   final String title;
+  final bool isPassword;
+
 
   @override
   Widget build(BuildContext context) {
+    ValueNotifier obsecure = useState<bool>(isPassword);
     return TextFormField(
       controller: userController,
+      obscureText: obsecure.value,
+      style:  getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -112,6 +128,7 @@ class AuthTextField extends StatelessWidget {
           borderSide: BorderSide(color: Color(0xffD32F2F), width: 2.0),
           borderRadius: BorderRadius.all(Radius.circular(35.0)),
         ),
+        suffixIcon:isPassword ? IconButton(icon: Icon(obsecure.value ?Icons.visibility_off:Icons.visibility,color: ColorManager.primaryLight), onPressed: () => obsecure.value = !obsecure.value,) : kSizedBox
       ),
     );
   }

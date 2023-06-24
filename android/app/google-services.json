@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "667017368861",
+    "project_id": "kenz-crm",
+    "storage_bucket": "kenz-crm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667017368861:android:1e46db10243f4e42953df4",
+        "android_client_info": {
+          "package_name": "com.kenzTechnologies.kenz_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667017368861-m4e3tk5pfc7tnk2sq4add8ka97ps7rf9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlijJLOXChWmppYkMboraaBp0JboOA-eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667017368861-m4e3tk5pfc7tnk2sq4add8ka97ps7rf9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

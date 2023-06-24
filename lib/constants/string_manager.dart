@@ -4,10 +4,12 @@ class AppStrings {
 
   static const String noRouteFound = "no_route_found";
   static const String skip = "skip";
-  static const String username = "username_hint";
+  static const String username = "username";
+  static const String userID = "userID";
+  static const String role = "role";
   static const String mobileNumber = "mobile_number_hint";
-  static const String usernameError = "invalid_user_name";
-  static const String passwordError = "invalid_password";
+  static const String subscription = "subscription";
+  static const String subscriptionStatus = "subscriptionStatus";
   static const String password = "password_hint";
   static const String login = "login_button";
   static const String forgetPassword = "forgot_password_text";

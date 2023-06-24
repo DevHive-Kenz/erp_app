@@ -1,8 +1,13 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:awesome_dialog/awesome_dialog.dart';
+import '../constants/color_manger.dart';
+import '../constants/values_manger.dart';
+import '../models/push_notification_model.dart';
 import '../provider/general_notifier.dart';
 import 'company_screen/company_screen.dart';
+import '../../core/notifier/company/company_List_notifier.dart';
 
 
 
@@ -15,8 +20,50 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
 
+  PushNotification? _notificationInfo;
+  Future<void> overlayPushNotification() async {
 
+    print("heellooo");
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge:true,
+      sound: true,
+    );
 
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Parse the message received
+      PushNotification notification = PushNotification(
+        title: message.notification?.title,
+        body: message.notification?.body,
+      );
+      if(message.notification?.body !=null){
+        setState(() {
+          _notificationInfo = notification;
+        });
+        if (_notificationInfo != null) {
+          // For displaying the notification as an overlay
+          AwesomeDialog(
+            dismissOnTouchOutside: false,
+            context: context,
+            dialogType: DialogType.NO_HEADER,
+            animType: AnimType.BOTTOMSLIDE,
+            title: _notificationInfo!.title!,
+            desc: _notificationInfo!.body!,
+            padding: const EdgeInsets.symmetric(horizontal: AppPadding.p10),
+            btnOkText: 'ok',
+            btnOkColor: ColorManager.primaryLight,
+            // btnOkOnPress: () async {
+            //   Navigator.pushReplacementNamed(context, loginRoute);
+            //   // await  context.read<AuthForceLoginNotifier>().forceFullyLogin(username: username, password: password);
+            // },
+          ).show();
+
+        }
+      }
+
+   });
+
+ }
   int index = 0;
   late final  themeNotifier;
 
@@ -30,8 +77,9 @@ super.initState();
 
   _asyncMethod() async {
     await Future.wait([
-     context.read<GeneralNotifier>().checkAxisCount(context: context)
-
+     context.read<GeneralNotifier>().checkAxisCount(context: context),
+     context.read<GeneralNotifier>().getUserNameFun(),
+      context.read<CompaniesListNotifier>().fetchCompaniesList(context: context)
     ]);
   }
 

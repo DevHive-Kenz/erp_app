@@ -28,8 +28,8 @@ class CacheService {
   }
 
   Future deleteSignUpCache() async {
-    // FlutterSecureStorage sharedPreferences = const FlutterSecureStorage();
-    // await sharedPreferences.delete(key:AppStrings.cToken);
+    FlutterSecureStorage sharedPreferences = const FlutterSecureStorage();
+    await sharedPreferences.delete(key:AppStrings.token);
 
     }
 }

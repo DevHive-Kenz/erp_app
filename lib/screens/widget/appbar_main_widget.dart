@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kenz_app/core/notifier/auth/auth_notifier.dart';
+import 'package:kenz_app/provider/general_notifier.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/color_manger.dart';
 import '../../constants/constants.dart';
@@ -18,6 +21,7 @@ class MainAppBarWidget extends StatelessWidget {
   final String? title;
   @override
   Widget build(BuildContext context) {
+    final generalNotifier = context.read<GeneralNotifier>();
     return Container(
       decoration: BoxDecoration(
         color: ColorManager.white,
@@ -38,21 +42,26 @@ class MainAppBarWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            isFirstPage ?  Row(
-              children: [
-                CircleAvatar(
-                  radius: 30.r,
-                  backgroundImage: NetworkImage(
-                      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
-                ),
-                kSizedW10,
-                Text(
-                  "Howdy, Jibin !!",
-                  style: getBoldStyle(
-                      color: ColorManager.primaryLight,
-                      fontSize: FontSize.s20),
-                )
-              ],
+            isFirstPage ?  Expanded(
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30.r,
+                    backgroundImage: NetworkImage(
+                        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+                  ),
+                  kSizedW10,
+                  Flexible(
+                    child: Text(
+                      "Howdy, ${generalNotifier.getUserName}!!",
+                      style: getBoldStyle(
+                          color: ColorManager.primaryLight,
+                          fontSize: FontSize.s20),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  )
+                ],
+              ),
             ) : Row(
               children: [
                 InkWell(

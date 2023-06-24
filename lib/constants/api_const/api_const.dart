@@ -2,7 +2,7 @@
 
 class AppAPI{
 
-  static const baseUrl = "http://134.209.104.7:5050";
+  static const baseUrl = "https://kenz-app-rzi5w.ondigitalocean.app";
 
 
 }
