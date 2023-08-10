@@ -60,8 +60,8 @@ class LoginScreen extends HookWidget {
                             return snapshot.getIsLoading ? const CircularProgressIndicatorWidget() : CustomButton(
                               title: "Login",
                               onTap: (){
-                                snapshot.getLogin(context: context, username:userController.text, password: passController.text);
-                                // Navigator.pushReplacementNamed(context, mainRoute);
+
+                                Navigator.pushReplacementNamed(context, mainRoute);
 
                               },
                             );
