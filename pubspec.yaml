@@ -53,6 +53,10 @@ dependencies:
   firebase_messaging: ^14.6.3
   firebase_core: ^2.14.0
   awesome_dialog:
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.0.11
+  hive_generator: ^2.0.0
 
 dev_dependencies:
   flutter_test:

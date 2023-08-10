@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kenz_app/constants/color_manger.dart';
 import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/provider/general_notifier.dart';
-import 'package:kenz_app/screens/branch_screen/branch_screen.dart';
 import 'package:kenz_app/screens/widget/appbar_main_widget.dart';
 import 'package:kenz_app/screens/widget/square_tile_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../../../constants/values_manger.dart';
 import '../../constants/app_routes.dart';
-import '../../core/notifier/id_expiry_module/company_documents/company_document_list_notifier.dart';
-import '../../core/notifier/id_expiry_module/employee_documents/employee_list_notifier.dart';
-import '../../core/notifier/id_expiry_module/vehicle_documents/vehicle_list_notifier.dart';
+import 'stock_take_screen.dart';
 import '../widget/Circular_progress_indicator_widget.dart';
 
-class CategoryScreen extends HookWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+class HomeScreen extends HookWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +34,9 @@ class CategoryScreen extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MainAppBarWidget(
-                    isFirstPage: false,
-                    title: generalNotifier.getBranchName ?? "Category",
+                    isFirstPage: true,
+                    title: ""
+
                   ),
                   kSizedBox20,
                   Expanded(
@@ -49,7 +47,7 @@ class CategoryScreen extends HookWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Document Category",
+                            "Home",
                             style: getSemiBoldStyle(
                                 color: ColorManager.primaryLight,
                                 fontSize: FontSize.s18),
@@ -60,42 +58,57 @@ class CategoryScreen extends HookWidget {
                               crossAxisCount: generalNotifier.getAxisCount,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              children: List.generate(3, (index) {
-                                String categoryType = index ==1 ? "Company":index == 2 ? "Vehicle":"Employee";
+                              children: List.generate(4, (index) {
+                                String categoryType = index ==0 ? "Stock Take":index == 1 ? "Get Products":index == 2 ? "Added Products" : "Post";
                                 return SquareTileWidget(
-                                  isEditingEnabled: isEditingEnabled,
-                                  icon: Icons.folder_copy_rounded,
-                                  onEditTap: (){
-                                    // generalNotifier.selectedCompanyID(companyID: data!.id! );
-                                  },
+                                  icon: index ==0 ? Icons.shopping_bag_rounded :index == 1 ? Icons.add_shopping_cart_rounded :index ==2 ? Icons.shopping_cart_rounded:index ==3 ?Icons.send_rounded:Icons.add,
                                   index: index,
                                   onTap: () async {
-                                    if(categoryType == "Employee" || categoryType== "Company" || categoryType == "Vehicle"){
-                                     isLoading.value = true;
-                                      if(categoryType == "Employee"){
-                                        generalNotifier.selectedCategoryID(selectedType: CategoryType.EMPLOYEE);
-                                        await context.read<EmployeeListNotifier>().fetchEmployeeList(context: context,);
-                                      }else if(categoryType== "Company"){
-                                        generalNotifier.selectedCategoryID(selectedType: CategoryType.COMPANY);
-                                        await context.read<CompanyDocumentListNotifier>().fetchCompanyDocumentList(context: context);
-                                      }else if(categoryType == "Vehicle"){
-                                        generalNotifier.selectedCategoryID(selectedType: CategoryType.VEHICLE);
-                                        await context.read<VehicleListNotifier>().fetchVehicleList(context: context);
-                                      }
-                                     isLoading.value = false;
-                                     Navigator.pushNamed(context, categoryCompanyRoute);
-                                    }else{
-                                      showSnackBar(context: context, text: "Please Select a Valid Option");
+                                    print(index);
+                                    if(index==0){
+
+                              Navigator.pushNamed(context, stockTakeScreen);
+
+                                    }else if (index == 1){
+
+
+
+                                    }else if(index ==2){
+
+                                      Navigator.pushNamed(context, stockViewScreen);
+
+                                    }else if(index ==3){
+
+
 
                                     }
-
                                   },
                                   name: categoryType,
                                 );
                               })
                                 ..add(kSizedBox2),
                             ),
-                          )
+                          ),
+                          Container(
+                            height: 50.h,
+                            decoration: BoxDecoration(
+                              color: ColorManager.filledColor,
+                              borderRadius: BorderRadius.circular(12)
+
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+
+                                  Text("Contact Support Team",style: getBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s14),),
+                                  Icon(Icons.support_agent_rounded,color: ColorManager.primaryLight,size: FontSize.s24,)
+                                ],
+                              ),
+                            ),
+                          ),
+                          kSizedBox10
                         ],
                       ),
                     ),

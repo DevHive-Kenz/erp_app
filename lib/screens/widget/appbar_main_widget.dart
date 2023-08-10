@@ -69,7 +69,6 @@ class MainAppBarWidget extends StatelessWidget {
                   child: Icon(Icons.arrow_back_rounded),
                 ),
                 kSizedW10,
-
                 Text(
                   title ?? "",
                   style: getBoldStyle(
@@ -78,12 +77,6 @@ class MainAppBarWidget extends StatelessWidget {
                 )
               ],
             ),
-            isFirstPage ?   IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.notifications_rounded,
-                  color: ColorManager.grey1,
-                )) : kSizedBox
           ],
         ),
       ),

@@ -78,10 +78,10 @@ class TextFormFieldCustom extends StatelessWidget {
             borderRadius:const  BorderRadius.all(Radius.circular(8.0)),
             borderSide: BorderSide(color:ColorManager.primaryLight),
           ),
-          prefixIcon: Icon(
+          prefixIcon: icon!=null ? Icon(
             icon,
             color: ColorManager.primaryLight ,
-          ),
+          ):null,
 
           // hintText: hintName,
           labelText: hintName,

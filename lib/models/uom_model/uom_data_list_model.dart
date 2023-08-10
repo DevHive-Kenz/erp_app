@@ -1,27 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-part 'company_document_list_result_model.g.dart';
+part 'uom_data_list_model.g.dart';
+@HiveType(typeId: 2)
 
 @JsonSerializable(explicitToJson: true)
-class CompanyDocumentResultListModel {
-  final int? id;
-  @JsonKey(name: "document_type")final String? documentType;
-  @JsonKey(name: "document_number")final String? documentNumber;
-  final String? expiry;
-  final int? company;
-  final int? branch;
+class UOMDataListModel{
+  @HiveField(0) final DateTime? Timestamp;
+  @HiveField(1) final String? ItemNO;
+  @HiveField(2) final String? Code;
+  @HiveField(3) final int? QtyPerUnitOfMeasure;
+  UOMDataListModel({
+    this.Timestamp, this.ItemNO, this.Code, this.QtyPerUnitOfMeasure,
 
-  CompanyDocumentResultListModel({
-    this.id,
-    this.documentType,
-    this.documentNumber,
-    this.expiry,
-    this.company,
-    this.branch,
   });
+  factory UOMDataListModel.fromJson(Map<String, dynamic> json) => _$UOMDataListModelFromJson(json);
 
-  factory CompanyDocumentResultListModel.fromJson(Map<String, dynamic> json) =>
-      _$CompanyDocumentResultListModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CompanyDocumentResultListModelToJson(this);
+  Map<String, dynamic> toJson() => _$UOMDataListModelToJson(this);
 }

@@ -42,12 +42,12 @@ class AuthNotifier extends ChangeNotifier {
         print(listData["result"]["user"]);
         _userName = listData["result"]["user"];
         notifyListeners();
-        cashService.writeCache(key: AppStrings.token, value: listData["result"]["token"]);
-        cashService.writeCache(key: AppStrings.username, value: listData["result"]["user"]);
-        cashService.writeCache(key: AppStrings.userID, value: listData["result"]["user_id"].toString());
-        cashService.writeCache(key: AppStrings.role, value: "ADMIN");
-        cashService.writeCache(key: AppStrings.subscription, value: listData["result"]["subscripition_expiry"]);
-        cashService.writeCache(key: AppStrings.subscriptionStatus, value: listData["result"]["subscription_status"].toString());
+        // cashService.writeCache(key: AppStrings.token, value: listData["result"]["token"]);
+        // cashService.writeCache(key: AppStrings.username, value: listData["result"]["user"]);
+        // cashService.writeCache(key: AppStrings.userID, value: listData["result"]["user_id"].toString());
+        // cashService.writeCache(key: AppStrings.role, value: "ADMIN");
+        // cashService.writeCache(key: AppStrings.subscription, value: listData["result"]["subscripition_expiry"]);
+        // cashService.writeCache(key: AppStrings.subscriptionStatus, value: listData["result"]["subscription_status"].toString());
         Navigator.pushReplacementNamed(context, mainRoute);
       }else{
         showSnackBar(context: context, text: listData["message"]);

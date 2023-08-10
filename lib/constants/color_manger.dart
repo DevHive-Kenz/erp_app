@@ -29,4 +29,7 @@ class ColorManager {
   static Color grey3 = HexColor.fromHex("#828282");
   static Color grey4 = HexColor.fromHex("#BDBDBD");
   static Color grey5 = HexColor.fromHex("#E0E0E0");
+  static Color filledColor = HexColor.fromHex("#F5F6FA");
+  static Color filledColor2 = HexColor.fromHex("#d3d7e8");
+
 }

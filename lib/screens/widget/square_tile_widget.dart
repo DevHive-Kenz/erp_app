@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kenz_app/screens/branch_screen/branch_screen.dart';
-import 'package:kenz_app/screens/company_screen/company_form_screen.dart';
-
 import '../../constants/app_routes.dart';
 import '../../constants/color_manger.dart';
 import '../../constants/constants.dart';
@@ -14,17 +11,13 @@ class SquareTileWidget extends HookWidget {
       {Key? key,
       required this.index,
       required this.onTap,
-      required this.onEditTap,
       required this.name,
-      required this.isEditingEnabled,
       this.icon = Icons.apartment})
       : super(key: key);
   final int index;
   final String name;
   final IconData icon;
   final VoidCallback onTap;
-  final VoidCallback onEditTap;
-  final ValueNotifier isEditingEnabled;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -46,15 +39,7 @@ class SquareTileWidget extends HookWidget {
           ),
           child: Stack(
             children: [
-              isEditingEnabled.value
-                  ? Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                          icon: Icon(Icons.edit,
-                              color: Colors.white, size: FontSize.s24),
-                          onPressed: onEditTap),
-                    )
-                  : kSizedBox,
+
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -27,7 +27,7 @@ class LogOutNotifier extends ChangeNotifier {
       notifyListeners();
       final listData = await _loginAPI.logout();
       if(listData["status"] == 200){
-        cashService.deleteCache(key: AppStrings.token);
+        cashService.deleteCache(key: "AppStrings.token");
         Navigator.pushReplacementNamed(context, loginRoute);
       }else{
         showSnackBar(context: context, text: listData["message"]);

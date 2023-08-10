@@ -8,54 +8,79 @@ import '../../constants/style_manager.dart';
 import '../../constants/values_manger.dart';
 
 class ListBuilderCustomWidget extends StatelessWidget {
-
-
   const ListBuilderCustomWidget({
-    Key? key,required this.title,required this.documentNumber,this.expiry,required this.onTap,required this.onEditTap
+    Key? key,
+    required this.index,
+    required this.name,
+    required this.code,
+    required this.baseUnit,
+    required this.scannedUnit,
+    required this.scannedQty,
+    required this.qty,
+    required this.barcode,
+    required this.onTap,
   }) : super(key: key);
-final String title;
-final String documentNumber;
-final String? expiry;
-final Function()? onTap;
-final Function()? onEditTap;
+
+  final int index;
+  final String name;
+  final String code;
+  final String baseUnit;
+  final String scannedUnit;
+  final String? scannedQty;
+  final String? qty;
+  final String? barcode;
+  final Function()? onTap;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppPadding.p10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Color(0xffD7E4F4),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text("#$index", style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16)),
+            ),
+            _buildRichText("Name", name),
+            _buildRichText("Code", code),
+            _buildRichText("Base Unit", baseUnit),
+            _buildRichText("Scanned Unit", scannedUnit),
+            _buildRichText("Qty", qty ?? ""),
+            _buildRichText("Scanned Qty", scannedQty ?? ""),
+            _buildRichText("Barcode", barcode ?? ""),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Icon(Icons.delete_forever_rounded),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  RichText _buildRichText(String label, String value) {
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
         children: [
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-
-                    image: DecorationImage(
-                        image: NetworkImage("https://www.fjsolicitors.co.uk/wp-content/uploads/2022/12/drafting-legal-documents-scaled.jpg"),
-                        fit: BoxFit.fill
-                    )
-                ),
-                height: 80.h,
-                width: 80.h,
-              ),
-              kSizedW10,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s16) ,),
-                  Text(documentNumber,style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,),
-                 expiry != null ? Text("Expiry $expiry",style: getRegularStyle(color: ColorManager.black,fontSize: FontSize.s14) ,):kSizedBox,
-                ],
-              ),
-
-            ],
+          TextSpan(
+            text: "$label: ",
+            style: getSemiBoldStyle(color: ColorManager.grey, fontSize: FontSize.s12),
           ),
-
-          IconButton(onPressed: onEditTap, icon: Icon(Icons.edit,color: ColorManager.grey3,))
-
+          TextSpan(
+            text: value,
+            style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s14),
+          ),
         ],
       ),
     );
   }
 }
+
