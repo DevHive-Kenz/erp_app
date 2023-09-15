@@ -11,7 +11,6 @@ import 'package:kenz_app/screens/widget/square_tile_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/values_manger.dart';
 import '../../constants/app_routes.dart';
-import 'stock_take_screen.dart';
 import '../widget/Circular_progress_indicator_widget.dart';
 
 class HomeScreen extends HookWidget {
@@ -21,9 +20,14 @@ class HomeScreen extends HookWidget {
   Widget build(BuildContext context) {
     final generalNotifier = context.watch<GeneralNotifier>();
     double screenWidth = MediaQuery.of(context).size.width;
-    generalNotifier.checkAxisCount(context: context);
     final isEditingEnabled = useState<bool>(false);
     final isLoading = useState<bool>(false);
+
+    useEffect(() {
+      Future.microtask(() => generalNotifier.checkAxisCount(context: context));
+
+      return null;
+    },[]);
 
     print(screenWidth);
     return Scaffold(
@@ -58,27 +62,18 @@ class HomeScreen extends HookWidget {
                               crossAxisCount: generalNotifier.getAxisCount,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              children: List.generate(4, (index) {
-                                String categoryType = index ==0 ? "Stock Take":index == 1 ? "Get Products":index == 2 ? "Added Products" : "Post";
+                              children: List.generate(2, (index) {
+                                String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":"Add";
                                 return SquareTileWidget(
-                                  icon: index ==0 ? Icons.shopping_bag_rounded :index == 1 ? Icons.add_shopping_cart_rounded :index ==2 ? Icons.shopping_cart_rounded:index ==3 ?Icons.send_rounded:Icons.add,
+                                  icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :Icons.add,
                                   index: index,
                                   onTap: () async {
                                     print(index);
                                     if(index==0){
+                                      Navigator.pushNamed(context, sales);
 
-                              Navigator.pushNamed(context, stockTakeScreen);
 
                                     }else if (index == 1){
-
-
-
-                                    }else if(index ==2){
-
-                                      Navigator.pushNamed(context, stockViewScreen);
-
-                                    }else if(index ==3){
-
 
 
                                     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kenz_app/constants/style_manager.dart';
 import '../../constants/app_routes.dart';
 import '../../constants/color_manger.dart';
 import '../../constants/constants.dart';
@@ -27,7 +28,7 @@ class SquareTileWidget extends HookWidget {
         child: Container(
           // color: Colors.blueGrey,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(160.r),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -45,12 +46,14 @@ class SquareTileWidget extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(icon,
-                        color: ColorManager.white, size: FontSize.s36),
+                        color: ColorManager.white, size: FontSize.s30),
                     kSizedBox10,
-                    Text(
-                      name,
-                      style: TextStyle(
-                          color: Colors.white, fontSize: FontSize.s16),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        name,
+                        style: getSemiBoldStyle(color: Colors.white)
+                      ),
                     ),
                   ],
                 ),

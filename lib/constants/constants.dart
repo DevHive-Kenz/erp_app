@@ -1,6 +1,7 @@
 
 
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,7 @@ import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
 
 
+import '../main.dart';
 import 'app_routes.dart';
 import 'color_manger.dart';
 import 'font_manager.dart';
@@ -263,3 +265,21 @@ void showSnackBar(
 //   }
 //   return null;
 // }
+void showAwesomeDialogue({required String title,required String content,required DialogType type,}){
+
+  AwesomeDialog(
+      dismissOnTouchOutside: true,
+      context: navigatorKey.currentContext!,
+      dialogType: type,
+      showCloseIcon: false,
+
+      animType: AnimType.SCALE,
+      title: title,
+      desc: content,
+      descTextStyle: getSemiBoldStyle(color: ColorManager.primaryLight),
+      // desc:'Please login again',
+      // btnCancelOnPress: () {},
+      btnOkText: "ok",
+      btnOkColor: ColorManager.primaryLight)
+      .show();
+}

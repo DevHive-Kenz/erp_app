@@ -4,6 +4,7 @@ import 'package:kenz_app/core/notifier/auth/auth_notifier.dart';
 import 'package:kenz_app/provider/general_notifier.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/app_routes.dart';
 import '../../constants/color_manger.dart';
 import '../../constants/constants.dart';
 import '../../constants/font_manager.dart';
@@ -45,10 +46,13 @@ class MainAppBarWidget extends StatelessWidget {
             isFirstPage ?  Expanded(
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 30.r,
-                    backgroundImage: NetworkImage(
-                        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+                  InkWell(
+                    onTap: ()=>Navigator.pushNamed(context, settingsScreen),
+                    child: CircleAvatar(
+                      radius: 30.r,
+                      backgroundImage: NetworkImage(
+                          "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
+                    ),
                   ),
                   kSizedW10,
                   Flexible(

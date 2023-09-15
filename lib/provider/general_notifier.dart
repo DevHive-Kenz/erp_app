@@ -21,16 +21,16 @@ class GeneralNotifier extends ChangeNotifier {
     double screenWidth = MediaQuery.of(context).size.width;
 
     if (screenWidth > 1200) {
-      _axisCount = 6;
+      _axisCount = 7;
     } else if (screenWidth > 1000) {
-      _axisCount = 4;
+      _axisCount = 6;
     }
     else if (screenWidth > 800) {
-      _axisCount = 4;
+      _axisCount = 5;
     }  else if (screenWidth > 600) {
-      _axisCount = 3;
+      _axisCount = 4;
     }else {
-      _axisCount = 2;
+      _axisCount = 3;
     }
     notifyListeners();
   }

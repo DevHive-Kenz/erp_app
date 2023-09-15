@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,6 +22,8 @@ class LoginScreen extends HookWidget {
   Widget build(BuildContext context) {
     final userController = useTextEditingController();
     final passController = useTextEditingController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -38,38 +41,47 @@ class LoginScreen extends HookWidget {
 
                 child: Padding(
                   padding:  EdgeInsets.only(top:150.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text("Hello 👋",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s30) ),
-                    Text("Welcome !",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s28) ),
-                  kSizedBox50,
-                     AuthTextField(userController: userController,title: "Enter User Name",isPassword: false),
-                      kSizedBox20,
-                      AuthTextField(userController: passController,title: "Enter Password",isPassword: true,),
-                      kSizedBox10,
-                      Align(
-                          alignment: Alignment.centerRight,
-                          child: Text("Forgot password",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s16) )),
-                      kSizedBox35,
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Text("Hello 👋",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s30) ),
+                      Text("Welcome !",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s28) ),
+                    kSizedBox50,
+                       AuthTextField(userController: userController,title: "Enter User Name",isPassword: false),
+                        kSizedBox20,
+                        AuthTextField(userController: passController,title: "Enter Password",isPassword: true,),
+                        kSizedBox10,
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Text("Forgot password",style: getSemiBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s16) )),
+                        kSizedBox35,
 
-                      Center(
-                        child: Consumer<AuthNotifier>(
+                        Center(
+                          child: Consumer<AuthNotifier>(
 
-                          builder: (context, snapshot,_) {
-                            return snapshot.getIsLoading ? const CircularProgressIndicatorWidget() : CustomButton(
-                              title: "Login",
-                              onTap: (){
+                            builder: (context, snapshot,_) {
+                              return snapshot.getIsLoading ? const CircularProgressIndicatorWidget() : CustomButton(
+                                title: "Login",
+                                onTap: (){
+                                  if(formKey.currentState?.validate() ??false ) {
+                                    snapshot.getLogin(context: context, username: userController.text , password: passController.text).then((value) {
+                                     if(value == "OK"){
+                                       Navigator.pushReplacementNamed(context, mainRoute);
+                                     }
 
-                                Navigator.pushReplacementNamed(context, mainRoute);
+                                      });
+                                  }
 
-                              },
-                            );
-                          }
-                        ),
-                      )
+                                },
+                              );
+                            }
+                          ),
+                        )
 
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -101,6 +113,12 @@ class AuthTextField extends HookWidget {
     return TextFormField(
       controller: userController,
       obscureText: obsecure.value,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please $title';
+        }
+        return null;
+      },
       style:  getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14),
       decoration: InputDecoration(
         filled: true,

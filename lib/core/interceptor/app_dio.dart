@@ -79,9 +79,11 @@ class AppInterceptors extends Interceptor {
       case DioErrorType.cancel:
         break;
       case DioErrorType.other:
-        const SnackBar snackBar = SnackBar(
-            backgroundColor: Colors.red, content: Text("No Internet Connection"));
+         SnackBar snackBar = SnackBar(
+            backgroundColor: Colors.red, content: Text("No Internet Connection",style: getSemiBoldStyle(color: Colors.white),));
         snackbarKey.currentState?.showSnackBar(snackBar);
+         throw NoInternetConnectionException(err.requestOptions);
+
     }
     return handler.next(err);
   }
