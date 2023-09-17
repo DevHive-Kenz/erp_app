@@ -10,7 +10,7 @@ ProfileModel _$ProfileModelFromJson(Map<String, dynamic> json) => ProfileModel(
       result: (json['result'] as List<dynamic>?)
           ?.map((e) => ProfileResultModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: json['status'] as String?,
+      status: json['status'] as int?,
     );
 
 Map<String, dynamic> _$ProfileModelToJson(ProfileModel instance) =>

@@ -7,7 +7,7 @@ part 'product_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ProductModel {
-  final String? status;
+  final int? status;
   final List<ProductResultModel>? result;
   ProductModel({this.result, this.status});
 

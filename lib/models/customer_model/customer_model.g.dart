@@ -11,7 +11,7 @@ CustomerModel _$CustomerModelFromJson(Map<String, dynamic> json) =>
       result: (json['result'] as List<dynamic>?)
           ?.map((e) => CustomerResultModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: json['status'] as String?,
+      status: json['status'] as int?,
     );
 
 Map<String, dynamic> _$CustomerModelToJson(CustomerModel instance) =>

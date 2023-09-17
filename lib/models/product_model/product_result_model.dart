@@ -13,7 +13,7 @@ class ProductResultModel {
   final String? sku;
   final DateTime? added;
   @JsonKey(name: "user_id") final int? userID;
-  @JsonKey(name: "name") final String? mango;
+  @JsonKey(name: "name") final String? name;
   @JsonKey(name: "name_arabic") final String? nameArabic;
   @JsonKey(name: "image") final String? image;
   @JsonKey(name: "category_id") final int? categoryId;
@@ -40,7 +40,7 @@ class ProductResultModel {
       this.sku,
       this.added,
       this.userID,
-      this.mango,
+      this.name,
       this.nameArabic,
       this.image,
       this.categoryId,

@@ -5,6 +5,7 @@ import 'package:kenz_app/constants/color_manger.dart';
 import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
+import 'package:kenz_app/core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
 import 'package:kenz_app/provider/general_notifier.dart';
 import 'package:kenz_app/screens/widget/appbar_main_widget.dart';
 import 'package:kenz_app/screens/widget/square_tile_widget.dart';
@@ -70,6 +71,10 @@ class HomeScreen extends HookWidget {
                                   onTap: () async {
                                     print(index);
                                     if(index==0){
+isLoading.value = true;
+                                      await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE");
+isLoading.value = false;
+
                                       Navigator.pushNamed(context, sales);
 
 

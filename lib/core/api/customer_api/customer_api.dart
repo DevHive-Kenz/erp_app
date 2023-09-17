@@ -5,18 +5,12 @@ import 'package:dio/dio.dart';
 import '../../../constants/api_const/api_const.dart';
 import '../../interceptor/app_dio.dart';
 
-class LoginAPI {
-  Future loginUser({required String email, required String pass, required String token}) async {
-    const String subUrl = "/api/auth/login/";
+class CustomerApi {
+  Future customer() async {
+    const String subUrl = "/api/common/customer";
     String uri = AppAPI.baseUrl + subUrl;
-    final bodyData = json.encode({
-      "email":email,
-      "password":pass,
-      "device_token":token
-    });
-    final response = await Api().dio.post(
-        uri,
-        data: bodyData
+    final response = await Api().dio.get(
+      uri,
     );
     final statusCode = response.statusCode;
     final body = response.data;

@@ -18,7 +18,7 @@ class AuthInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final listOfPaths = <String>[
-        '${AppAPI.baseUrl}/api/login/'
+        '${AppAPI.baseUrl}/api/auth/login/'
     ];
     if (listOfPaths.contains(options.path.toString())) {
       return handler.next(options);

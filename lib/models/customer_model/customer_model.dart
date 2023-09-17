@@ -6,7 +6,7 @@ part 'customer_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class CustomerModel {
-  final String? status;
+  final int? status;
   final List<CustomerResultModel>? result;
   CustomerModel({this.result, this.status});
   factory CustomerModel.fromJson(Map<String, dynamic> json) =>

@@ -14,7 +14,7 @@ ProductResultModel _$ProductResultModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['added'] as String),
       userID: json['user_id'] as int?,
-      mango: json['name'] as String?,
+      name: json['name'] as String?,
       nameArabic: json['name_arabic'] as String?,
       image: json['image'] as String?,
       categoryId: json['category_id'] as int?,
@@ -48,7 +48,7 @@ Map<String, dynamic> _$ProductResultModelToJson(ProductResultModel instance) =>
       'sku': instance.sku,
       'added': instance.added?.toIso8601String(),
       'user_id': instance.userID,
-      'name': instance.mango,
+      'name': instance.name,
       'name_arabic': instance.nameArabic,
       'image': instance.image,
       'category_id': instance.categoryId,

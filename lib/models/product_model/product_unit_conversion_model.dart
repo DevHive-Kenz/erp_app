@@ -11,10 +11,11 @@ class ProductUnitConversionDataModel {
   final String? qty;
   final String? price;
   @JsonKey(name: "to_unit") final String? toUnit;
+  @JsonKey(name: "unit_name") final String? toUnitName;
   final List? barcode;
   final List<ProductItemsModel>? items;
 
-  ProductUnitConversionDataModel(
+  ProductUnitConversionDataModel(this.toUnitName,
       {this.qty, this.price, this.toUnit, this.barcode, this.items});
 
 

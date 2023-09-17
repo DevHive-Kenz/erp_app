@@ -12,6 +12,7 @@ class TextFormFieldCustom extends StatelessWidget {
   final String? hintName;
   final IconData? icon;
   final bool isObscureText;
+  final bool isValidate;
   final int? maxLength,maxLine;
   final TextInputType inputType;
   final bool isEnable, isEditable, isReadOnly;
@@ -33,6 +34,7 @@ class TextFormFieldCustom extends StatelessWidget {
         this.maxLine,
         this.inputFormatters,
         this.isObscureText = false,
+        this.isValidate = true,
         this.inputType = TextInputType.text,
         this.isEnable = true,
         this.onTap,
@@ -55,13 +57,14 @@ class TextFormFieldCustom extends StatelessWidget {
         style: getSemiBoldStyle(color:ColorManager.black),
         keyboardType: inputType,
         inputFormatters: inputFormatters,
-        validator: validator ??
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: isValidate ? validator ??
                 (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter $hintName';
               }
               return null;
-            },
+            }:null,
         onChanged:  onChanged,
         maxLines: maxLine,
         autocorrect: isEditable,
@@ -69,6 +72,7 @@ class TextFormFieldCustom extends StatelessWidget {
         enableInteractiveSelection: isEditable,
         maxLength: maxLength,
         decoration: InputDecoration(
+          errorMaxLines: 3,
           contentPadding: EdgeInsets.symmetric( horizontal: AppPadding.p16),
           floatingLabelStyle: getSemiBoldStyle(color:ColorManager.primaryLight ),
           enabledBorder: OutlineInputBorder(

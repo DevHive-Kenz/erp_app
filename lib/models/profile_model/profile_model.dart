@@ -6,7 +6,7 @@ part 'profile_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ProfileModel {
-  final String? status;
+  final int? status;
   final List<ProfileResultModel>? result;
   ProfileModel({this.result, this.status});
 

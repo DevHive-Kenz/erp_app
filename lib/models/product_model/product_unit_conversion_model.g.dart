@@ -9,6 +9,7 @@ part of 'product_unit_conversion_model.dart';
 ProductUnitConversionDataModel _$ProductUnitConversionDataModelFromJson(
         Map<String, dynamic> json) =>
     ProductUnitConversionDataModel(
+      json['unit_name'] as String?,
       qty: json['qty'] as String?,
       price: json['price'] as String?,
       toUnit: json['to_unit'] as String?,
@@ -24,6 +25,7 @@ Map<String, dynamic> _$ProductUnitConversionDataModelToJson(
       'qty': instance.qty,
       'price': instance.price,
       'to_unit': instance.toUnit,
+      'unit_name': instance.toUnitName,
       'barcode': instance.barcode,
       'items': instance.items?.map((e) => e.toJson()).toList(),
     };

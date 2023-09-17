@@ -1,8 +1,16 @@
+import 'package:kenz_app/provider/sales_printing_notifier.dart';
+import 'package:kenz_app/provider/search_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '../core/notifier/auth/auth_notifier.dart';
 
+import '../core/notifier/product_notifier/product_notifier.dart';
+import '../core/notifier/customer_notifier/customer_notifier.dart';
+import '../core/notifier/profile_notifier/profile_notifier.dart';
+import '../core/notifier/sales_return_notifier/sales_return_notifier.dart';
+import '../core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
+import 'current_sale_notifier.dart';
 import 'dataBase_fetch_notifier.dart';
 import 'database_functionalities_notifier.dart';
 import 'general_notifier.dart';
@@ -16,6 +24,27 @@ List<SingleChildWidget> providersList = [
   ChangeNotifierProvider(create: (_) => AuthNotifier()),
   ChangeNotifierProvider(create: (_) => DataBaseFunctionalities()),
   ChangeNotifierProvider(create: (_) => DataBaseFetch()),
+  ChangeNotifierProvider(create: (_) => SearchProvider()),
+  ChangeNotifierProvider(create: (_) => SeriesFetchNotifier()),
+
+  ///customer
+  ChangeNotifierProvider(create: (_) => ProductNotifier()),
+
+  ///sales
+  ChangeNotifierProvider(create: (_) => SalesReturnNotifier()),
+  ChangeNotifierProvider(create: (_) => CurrentSaleNotifier()),
+  ChangeNotifierProvider(create: (_) => InvoicePrintingNotifier()),
+
+
+  ///product
+  ChangeNotifierProvider(create: (_) => CustomerNotifier()),
+
+
+
+  ///profile
+  ChangeNotifierProvider(create: (_) => ProfileNotifier()),
+
+
 
 
 ];
