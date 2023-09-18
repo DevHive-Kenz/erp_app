@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,6 +39,9 @@ class SalesAddScreen extends HookWidget {
     final unitController = useTextEditingController();
     final rateController = useTextEditingController();
     final priceListController = useTextEditingController();
+    ScrollController scrollController = ScrollController();
+
+    final qtyFocus = useFocusNode();
     final discountPercentController = useTextEditingController(text: "0.00");
     final discountFixedController = useTextEditingController(text: "0.00");
     final taxPercentController = useTextEditingController(text: "0% VAT");
@@ -49,6 +53,7 @@ class SalesAddScreen extends HookWidget {
 
       Future.microtask(() {
        searchProduct.initializeProductList(productNotifier.getProductModelData?.result ?? []);
+
       },);
 
       return null;
@@ -67,6 +72,383 @@ class SalesAddScreen extends HookWidget {
       vatTotal.value = 0.00;
     }
 
+
+
+    ///select unit
+
+    void selectUnitFunc(){
+      if(priceListController.text.isNotEmpty){
+        showModalBottomSheet(
+            backgroundColor:
+            Colors.transparent,
+            context: context,
+            elevation: 500,
+            isScrollControlled: true,
+            shape:
+            const RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            clipBehavior: Clip.hardEdge,
+            builder:
+                (BuildContext context) {
+              return SingleChildScrollView(
+                child: LayoutBuilder(
+                    builder: (BuildContextcontext, BoxConstraints constraints) {
+                      bool isSmallScreen = MediaQuery.of(context).size.width < 800;
+                      double widthFactor = isSmallScreen ? 1.0 : 0.7;
+                      return FractionallySizedBox(
+                        widthFactor: widthFactor,
+                        child: StatefulBuilder(
+                            builder: (BuildContextcontext, setModalState) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
+                                      )),
+                                  height: 300.h,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppPadding.p8),
+                                  child:  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      kSizedBox15,
+                                      Text(
+                                        "Select the unit",
+                                        style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
+                                      ),
+                                      kSizedBox30,
+                                      Expanded(
+                                        child: ListView.separated(
+                                            separatorBuilder: (context, index) {
+                                              return const Divider();
+                                            },
+                                            itemCount: currentNotifier.getSelectedProduct?.unitConversionData?.length ?? 0,
+                                            itemBuilder: (context, index) {
+                                              ProductUnitConversionDataModel? data = currentNotifier.getSelectedProduct?.unitConversionData?[index];
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  currentNotifier.setConversion = data!;
+                                                  data.items?.forEach((element) {
+                                                    if(element.id.toString() == currentNotifier.getSelectedPriceList?.id){
+                                                      currentNotifier.setPriceFromConversion = element;
+                                                    }
+                                                  });
+                                                  qtyController.text = "1";
+                                                  rateController.text = currentNotifier.getSelectedPriceFromConv?.standardLimitPrice ?? "0.00";
+                                                  unitController.text = data.toUnitName ?? "";
+                                                  subtotal.value = double.parse(rateController.text ?? "0.00");
+                                                  searchProduct.changeSearchString("");
+                                                  qtyFocus.requestFocus();
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
+                                                  child:  Text(
+                                                    data?.toUnitName ?? "",
+                                                    style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  ),),
+                              );
+                            }),
+                      );
+                    }),
+              );
+            });
+      }else{
+        showAwesomeDialogue(title: "Info", content: "Please Select PriceList before continuing", type: DialogType.INFO);
+      }
+
+    }
+
+    ///select price list
+    void selectPriceListFun(){
+      if(itemNameController.text.isNotEmpty){
+        showModalBottomSheet(
+            backgroundColor:
+            Colors.transparent,
+            context: context,
+            elevation: 500,
+            isScrollControlled: true,
+            shape:
+            const RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            clipBehavior: Clip.hardEdge,
+            builder:
+                (BuildContext context) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: LayoutBuilder(
+                    builder: (BuildContextcontext, BoxConstraints constraints) {
+                      bool isSmallScreen = MediaQuery.of(context).size.width < 800;
+                      double widthFactor = isSmallScreen ? 1.0 : 0.7;
+                      return FractionallySizedBox(
+                        widthFactor: widthFactor,
+                        child: StatefulBuilder(
+                            builder: (BuildContextcontext, setModalState) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
+                                      )),
+                                  height: 300.h,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppPadding.p8),
+                                  child:  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      kSizedBox15,
+                                      Text(
+                                        "Select the Price List",
+                                        style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
+                                      ),
+                                      kSizedBox10,
+                                      Expanded(
+                                        child: ListView.separated(
+                                            separatorBuilder: (context, index) {
+                                              return const Divider();
+                                            },
+                                            itemCount: currentNotifier.getSelectedProduct?.basePriceData?.length ?? 0,
+                                            itemBuilder: (context, index) {
+                                              ProductBasePriceDataModel? data = currentNotifier.getSelectedProduct?.basePriceData?[index];
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  currentNotifier.setPriceList = data!;
+                                                  priceListController.text = data.name ?? "";
+                                                  searchProduct.changeSearchString("");
+                                                  Navigator.pop(context);
+                                                  selectUnitFunc();
+
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
+                                                  child:  Text(
+                                                    data?.name ?? "",
+                                                    style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  ),),
+                              );
+                            }),
+                      );
+                    }),
+              );
+            });
+      }else{
+        showAwesomeDialogue(title: "Info", content: "Please Select Item before continuing", type: DialogType.INFO);
+      }
+
+    }
+
+    ///item select
+    void productDetailFun(){
+
+      showModalBottomSheet(
+          backgroundColor:
+          Colors.transparent,
+          context: context,
+          elevation: 500,
+          isScrollControlled: true,
+          shape:
+          const RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          clipBehavior: Clip.hardEdge,
+          builder:
+              (BuildContext context) {
+            return SingleChildScrollView(
+              child: LayoutBuilder(
+                  builder: (BuildContextcontext, BoxConstraints constraints) {
+                    bool isSmallScreen = MediaQuery.of(context).size.width < 800;
+                    double widthFactor = isSmallScreen ? 1.0 : 0.7;
+                    return FractionallySizedBox(
+                      widthFactor: widthFactor,
+                      child: StatefulBuilder(
+                          builder: (BuildContextcontext, setModalState) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
+                                    )),
+                                height: 500.h,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppPadding.p8),
+                                child:  Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    kSizedBox15,
+                                    Text(
+                                      "Search Product",
+                                      style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
+                                    ),
+                                    kSizedBox10,
+                                    CupertinoSearchTextField(
+                                      onChanged: (value) {
+                                        setModalState(() {
+                                          searchProduct.changeSearchString(value);
+                                        });
+                                      },
+                                      autofocus: true,
+                                    ),
+                                    kSizedBox20,
+                                    Expanded(
+                                      child: ListView.separated(
+                                          separatorBuilder: (context, index) {
+                                            return const Divider();
+                                          },
+                                          itemCount: searchProduct.getProductList.length,
+                                          itemBuilder: (context, index) {
+                                            ProductResultModel data = searchProduct.getProductList[index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                clearVariables();
+                                                currentNotifier.setProduct = data;
+                                                itemNameController.text = "${data.name}\n${data.nameArabic}";
+                                                searchProduct.changeSearchString("");
+                                                Navigator.pop(context);
+                                                selectPriceListFun();
+
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
+                                                child:  Text(
+                                                  "${data.name.toString()}\n${data.nameArabic.toString()}",
+                                                  style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                  ],
+                                ),),
+                            );
+                          }),
+                    );
+                  }),
+            );
+          });
+    }
+
+    ///select vat
+    void selectVat(){
+      showModalBottomSheet(
+          backgroundColor:
+          Colors.transparent,
+          context: context,
+          elevation: 500,
+          isScrollControlled: true,
+          shape:
+          const RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          clipBehavior: Clip.hardEdge,
+          builder: (BuildContext context) {
+            List vatList = ["0% VAT","5% VAT","15% VAT"];
+            return SingleChildScrollView(
+              child: LayoutBuilder(
+                  builder: (BuildContextcontext, BoxConstraints constraints) {
+                    bool isSmallScreen = MediaQuery.of(context).size.width < 800;
+                    double widthFactor = isSmallScreen ? 1.0 : 0.7;
+                    return FractionallySizedBox(
+                      widthFactor: widthFactor,
+                      child: StatefulBuilder(
+                          builder: (BuildContextcontext, setModalState) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
+                                    )),
+                                height: 300.h,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppPadding.p8),
+                                child:  Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    kSizedBox15,
+                                    Text(
+                                      "Select the Tax",
+                                      style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
+                                    ),
+                                    kSizedBox30,
+                                    Expanded(
+                                      child: ListView.separated(
+                                          separatorBuilder: (context, index) {
+                                            return const Divider();
+                                          },
+                                          itemCount:vatList.length,
+                                          itemBuilder: (context, index) {
+                                            String data = vatList[index];
+                                            return GestureDetector(
+                                              onTap: () {
+                                                RegExp regExp = RegExp(r'\d+(\.\d+)?');
+                                                Match? firstMatch = regExp.firstMatch(data);
+                                                print(firstMatch?.group(0));
+                                                currentNotifier.setVatPercent = firstMatch?.group(0) ?? "0.00";
+                                                taxPercentController.text = data;
+                                                vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+                                                searchProduct.changeSearchString("");
+                                                Navigator.pop(context);
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
+                                                child:  Text(
+                                                  data,
+                                                  style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                  ],
+                                ),),
+                            );
+                          }),
+                    );
+                  }),
+            );
+          });
+    }
     return  Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -102,96 +484,7 @@ class SalesAddScreen extends HookWidget {
                             hintName: "Select Item *",
                             isReadOnly: true,
                             onTap: (){
-                              showModalBottomSheet(
-                                  backgroundColor:
-                                  Colors.transparent,
-                                  context: context,
-                                  elevation: 500,
-                                  isScrollControlled: true,
-                                  shape:
-                                  const RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.vertical(
-                                      top: Radius.circular(20),
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
-                                  builder:
-                                      (BuildContext context) {
-                                    return SingleChildScrollView(
-                                      child: LayoutBuilder(
-                                          builder: (BuildContextcontext, BoxConstraints constraints) {
-                                            bool isSmallScreen = MediaQuery.of(context).size.width < 800;
-                                            double widthFactor = isSmallScreen ? 1.0 : 0.7;
-                                            return FractionallySizedBox(
-                                              widthFactor: widthFactor,
-                                              child: StatefulBuilder(
-                                                  builder: (BuildContextcontext, setModalState) {
-                                                    return Padding(
-                                                      padding: EdgeInsets.only(
-                                                        bottom: MediaQuery.of(context).viewInsets.bottom,
-                                                      ),
-                                                      child: Container(
-                                                        alignment: Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
-                                                            )),
-                                                        height: 500.h,
-                                                        padding: const EdgeInsets.symmetric(
-                                                            horizontal: AppPadding.p8),
-                                                        child:  Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            kSizedBox15,
-                                                            Text(
-                                                              "Search Product",
-                                                              style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
-                                                            ),
-                                                            kSizedBox10,
-                                                            CupertinoSearchTextField(
-                                                              onChanged: (value) {
-                                                                setModalState(() {
-                                                                  searchProduct.changeSearchString(value);
-                                                                });
-                                                              },
-                                                              autofocus: true,
-                                                            ),
-                                                            kSizedBox20,
-                                                            Expanded(
-                                                              child: ListView.separated(
-                                                                  separatorBuilder: (context, index) {
-                                                                    return const Divider();
-                                                                  },
-                                                                  itemCount: searchProduct.getProductList.length,
-                                                                  itemBuilder: (context, index) {
-                                                                    ProductResultModel data = searchProduct.getProductList[index];
-                                                                    return GestureDetector(
-                                                                      onTap: () {
-                                                                        clearVariables();
-                                                                        currentNotifier.setProduct = data;
-                                                                        itemNameController.text = "${data.name}\n${data.nameArabic}";
-                                                                        searchProduct.changeSearchString("");
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child: Container(
-                                                                        padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                        child:  Text(
-                                                                          "${data.name.toString()}\n${data.nameArabic.toString()}",
-                                                                          style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  }),
-                                                            ),
-                                                          ],
-                                                        ),),
-                                                    );
-                                                  }),
-                                            );
-                                          }),
-                                    );
-                                  });
+                              productDetailFun();
                             },
                           ),
                           kSizedBox15,
@@ -203,91 +496,11 @@ class SalesAddScreen extends HookWidget {
                                   hintName: "Select Price List",
                                   isReadOnly: true,
                                   onTap: (){
-                                    showModalBottomSheet(
-                                        backgroundColor:
-                                        Colors.transparent,
-                                        context: context,
-                                        elevation: 500,
-                                        isScrollControlled: true,
-                                        shape:
-                                        const RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                            top: Radius.circular(20),
-                                          ),
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        builder:
-                                            (BuildContext context) {
-                                          return SingleChildScrollView(
-                                            child: LayoutBuilder(
-                                                builder: (BuildContextcontext, BoxConstraints constraints) {
-                                                  bool isSmallScreen = MediaQuery.of(context).size.width < 800;
-                                                  double widthFactor = isSmallScreen ? 1.0 : 0.7;
-                                                  return FractionallySizedBox(
-                                                    widthFactor: widthFactor,
-                                                    child: StatefulBuilder(
-                                                        builder: (BuildContextcontext, setModalState) {
-                                                          return Padding(
-                                                            padding: EdgeInsets.only(
-                                                              bottom: MediaQuery.of(context).viewInsets.bottom,
-                                                            ),
-                                                            child: Container(
-                                                              alignment: Alignment.center,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.white,
-                                                                  borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
-                                                                  )),
-                                                              height: 300.h,
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  horizontal: AppPadding.p8),
-                                                              child:  Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  kSizedBox15,
-                                                                  Text(
-                                                                    "Select the Price List",
-                                                                    style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
-                                                                  ),
-                                                                  kSizedBox10,
-                                                                  Expanded(
-                                                                    child: ListView.separated(
-                                                                        separatorBuilder: (context, index) {
-                                                                          return const Divider();
-                                                                        },
-                                                                        itemCount: currentNotifier.getSelectedProduct?.basePriceData?.length ?? 0,
-                                                                        itemBuilder: (context, index) {
-                                                                          ProductBasePriceDataModel? data = currentNotifier.getSelectedProduct?.basePriceData?[index];
-                                                                          return GestureDetector(
-                                                                            onTap: () {
-                                                                              currentNotifier.setPriceList = data!;
-                                                                              priceListController.text = data.name ?? "";
-                                                                              searchProduct.changeSearchString("");
-                                                                              Navigator.pop(context);
-                                                                            },
-                                                                            child: Container(
-                                                                              padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                              child:  Text(
-                                                                                data?.name ?? "",
-                                                                                style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        }),
-                                                                  ),
-                                                                ],
-                                                              ),),
-                                                          );
-                                                        }),
-                                                  );
-                                                }),
-                                          );
-                                        });
+                                    selectPriceListFun();
                                   },
                                 ),
                               ),
                               kSizedW10,
-
                               Expanded(
                                 child: TextFormFieldCustom(
                                   controller: unitController,
@@ -295,94 +508,7 @@ class SalesAddScreen extends HookWidget {
 
                                   isReadOnly: true,
                                   onTap: (){
-                                    showModalBottomSheet(
-                                        backgroundColor:
-                                        Colors.transparent,
-                                        context: context,
-                                        elevation: 500,
-                                        isScrollControlled: true,
-                                        shape:
-                                        const RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                            top: Radius.circular(20),
-                                          ),
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        builder:
-                                            (BuildContext context) {
-                                          return SingleChildScrollView(
-                                            child: LayoutBuilder(
-                                                builder: (BuildContextcontext, BoxConstraints constraints) {
-                                                  bool isSmallScreen = MediaQuery.of(context).size.width < 800;
-                                                  double widthFactor = isSmallScreen ? 1.0 : 0.7;
-                                                  return FractionallySizedBox(
-                                                    widthFactor: widthFactor,
-                                                    child: StatefulBuilder(
-                                                        builder: (BuildContextcontext, setModalState) {
-                                                          return Padding(
-                                                            padding: EdgeInsets.only(
-                                                              bottom: MediaQuery.of(context).viewInsets.bottom,
-                                                            ),
-                                                            child: Container(
-                                                              alignment: Alignment.center,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.white,
-                                                                  borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
-                                                                  )),
-                                                              height: 300.h,
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  horizontal: AppPadding.p8),
-                                                              child:  Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  kSizedBox15,
-                                                                  Text(
-                                                                    "Select the unit",
-                                                                    style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
-                                                                  ),
-                                                                  kSizedBox30,
-                                                                  Expanded(
-                                                                    child: ListView.separated(
-                                                                        separatorBuilder: (context, index) {
-                                                                          return const Divider();
-                                                                        },
-                                                                        itemCount: currentNotifier.getSelectedProduct?.unitConversionData?.length ?? 0,
-                                                                        itemBuilder: (context, index) {
-                                                                          ProductUnitConversionDataModel? data = currentNotifier.getSelectedProduct?.unitConversionData?[index];
-                                                                          return GestureDetector(
-                                                                            onTap: () {
-                                                                              currentNotifier.setConversion = data!;
-                                                                              data.items?.forEach((element) {
-                                                                                if(element.id.toString() == currentNotifier.getSelectedPriceList?.id){
-                                                                                 currentNotifier.setPriceFromConversion = element;
-                                                                                }
-                                                                              });
-                                                                              qtyController.text = "1";
-                                                                              rateController.text = currentNotifier.getSelectedPriceFromConv?.standardLimitPrice ?? "0.00";
-                                                                              unitController.text = data.toUnitName ?? "";
-                                                                              subtotal.value = double.parse(rateController.text ?? "0.00");
-                                                                              searchProduct.changeSearchString("");
-                                                                              Navigator.pop(context);
-                                                                            },
-                                                                            child: Container(
-                                                                              padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                              child:  Text(
-                                                                                data?.toUnitName ?? "",
-                                                                                style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        }),
-                                                                  ),
-                                                                ],
-                                                              ),),
-                                                          );
-                                                        }),
-                                                  );
-                                                }),
-                                          );
-                                        });
+                                    selectUnitFunc();
                                   },
                                 ),
                               ),
@@ -395,8 +521,9 @@ class SalesAddScreen extends HookWidget {
                                 child: TextFormFieldCustom(
                                   controller: qtyController,
                                   inputType: TextInputType.number,
-
                                   hintName: "Quantity",
+                                  focus: qtyFocus,
+
                                   onChanged: (value){
                                     if(value.isNotEmpty){
                                       double val = double.parse(value);
@@ -404,7 +531,7 @@ class SalesAddScreen extends HookWidget {
                                         subtotal.value = val * double.parse(rateController.text);
                                       }else{
                                         showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
-                                    qtyController.clear();
+                                        qtyController.clear();
                                       }
                                     }
 
@@ -417,7 +544,6 @@ class SalesAddScreen extends HookWidget {
                                   controller: rateController,
                                   inputType: TextInputType.number,
                                   hintName: "Rate ",
-
                                   validator:  (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter rate';
@@ -482,6 +608,11 @@ class SalesAddScreen extends HookWidget {
                                 controller: discountPercentController,
                                 hintName:"Discount (%)",
                                 inputType: TextInputType.number,
+                                onTap: (){
+                                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
+                                  });
+                                },
                                 onChanged: (value){
                                   discountFixedController.text = "0.00";
                                   RegExp numericRegex = RegExp(r'^[0-9]*\.?[0-9]*$');
@@ -506,6 +637,11 @@ class SalesAddScreen extends HookWidget {
                                 controller: discountFixedController,
                                 hintName: "Discount (Fixed)",
                                 inputType: TextInputType.number,
+                                onTap: (){
+                                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
+                                  });
+                                },
                                 onChanged: (value){
                                   discountPercentController.text = "0.00";
                                   RegExp numericRegex = RegExp(r'^[0-9]*\.?[0-9]*$');
@@ -531,90 +667,7 @@ class SalesAddScreen extends HookWidget {
                           hintName:"Select Tax % *",
                           isReadOnly: true,
                           onTap: (){
-                            showModalBottomSheet(
-                                backgroundColor:
-                                Colors.transparent,
-                                context: context,
-                                elevation: 500,
-                                isScrollControlled: true,
-                                shape:
-                                const RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                clipBehavior: Clip.hardEdge,
-                                builder: (BuildContext context) {
-                                  List vatList = ["0% VAT","5% VAT","15% VAT"];
-                                  return SingleChildScrollView(
-                                    child: LayoutBuilder(
-                                        builder: (BuildContextcontext, BoxConstraints constraints) {
-                                          bool isSmallScreen = MediaQuery.of(context).size.width < 800;
-                                          double widthFactor = isSmallScreen ? 1.0 : 0.7;
-                                          return FractionallySizedBox(
-                                            widthFactor: widthFactor,
-                                            child: StatefulBuilder(
-                                                builder: (BuildContextcontext, setModalState) {
-                                                  return Padding(
-                                                    padding: EdgeInsets.only(
-                                                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                                                    ),
-                                                    child: Container(
-                                                      alignment: Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
-                                                          )),
-                                                      height: 300.h,
-                                                      padding: const EdgeInsets.symmetric(
-                                                          horizontal: AppPadding.p8),
-                                                      child:  Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          kSizedBox15,
-                                                          Text(
-                                                            "Select the Tax",
-                                                            style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
-                                                          ),
-                                                          kSizedBox30,
-                                                          Expanded(
-                                                            child: ListView.separated(
-                                                                separatorBuilder: (context, index) {
-                                                                  return const Divider();
-                                                                },
-                                                                itemCount:vatList.length,
-                                                                itemBuilder: (context, index) {
-                                                                  String data = vatList[index];
-                                                                  return GestureDetector(
-                                                                    onTap: () {
-                                                                      RegExp regExp = RegExp(r'\d+(\.\d+)?');
-                                                                      Match? firstMatch = regExp.firstMatch(data);
-                                                                      print(firstMatch?.group(0));
-                                                                      currentNotifier.setVatPercent = firstMatch?.group(0) ?? "0.00";
-                                                                       taxPercentController.text = data;
-                                                                       vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
-                                                                      searchProduct.changeSearchString("");
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                      child:  Text(
-                                                                        data,
-                                                                        style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                }),
-                                                          ),
-                                                        ],
-                                                      ),),
-                                                  );
-                                                }),
-                                          );
-                                        }),
-                                  );
-                                });
+                            selectVat();
                           },
                         ),
                         kSizedBox15,

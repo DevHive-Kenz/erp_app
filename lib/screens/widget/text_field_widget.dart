@@ -21,6 +21,8 @@ class TextFormFieldCustom extends StatelessWidget {
   final Function(String)? onChanged;
   final void Function()? onTap;
   final double paddingWidth;
+  final FocusNode? focus;
+
 
 
   const TextFormFieldCustom(
@@ -39,7 +41,7 @@ class TextFormFieldCustom extends StatelessWidget {
         this.isEnable = true,
         this.onTap,
         this.isReadOnly = false,
-        this.paddingWidth = AppPadding.p20,
+        this.paddingWidth = AppPadding.p20,this.focus,
 
         Key? key})
       : super(key: key);
@@ -67,6 +69,8 @@ class TextFormFieldCustom extends StatelessWidget {
             }:null,
         onChanged:  onChanged,
         maxLines: maxLine,
+        focusNode: focus,
+
         autocorrect: isEditable,
         enableSuggestions: isEditable,
         enableInteractiveSelection: isEditable,

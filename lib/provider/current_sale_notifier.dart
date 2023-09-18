@@ -20,7 +20,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
   DateTime? _date;
   String? _poNumber;
   String? _poDate;
-  String? _paymentMethod;
+  String? _paymentMethod = "CASH";
   double _vatPercent = 15;
   CustomerResultModel? _selectedCustomer;
   ProductResultModel? _selectedProduct;
@@ -96,7 +96,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _selectedProduct=null;
     _selectedCustomer=null;
     _vatPercent=15;
-    _paymentMethod=null;
+    _paymentMethod="CASH";
     _items=[];
     notifyListeners();
   }
@@ -112,6 +112,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _poNumber = poNumber;
     _poDate = poDate;
     _selectedCustomer = dataCustomer;
+
     _displayInvoiceId = displayInvoiceId;
     _items = [];
     notifyListeners();

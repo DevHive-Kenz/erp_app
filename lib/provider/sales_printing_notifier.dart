@@ -155,21 +155,18 @@ class InvoicePrintingNotifier extends ChangeNotifier{
                               pw.TextDirection.rtl
                               ),
                               pw.Text(
-                                  '${productsNotifier.getSelectedCustomer?.address1A ?? ""} - ${productsNotifier.getSelectedCustomer?.address2A ?? ""}',
+                                  '${productsNotifier.getSelectedCustomer?.address1A ?? ""} ${productsNotifier.getSelectedCustomer?.address2A ?? ""}',
                                   style: testStyle(FontSize.s8,font2),    textDirection:
-                              pw.TextDirection.rtl
+                              pw.TextDirection.rtl,textAlign: pw.TextAlign.left
 
                               ),
                               pw.Text(
                                   '${productsNotifier.getSelectedCustomer?.crnNumber ?? ""}',
-                                  style: testStyle(FontSize.s8,font2),    textDirection:
-                              pw.TextDirection.rtl
+                                  style: testStyle(FontSize.s8,font2),
 
                               ),
-                              pw.Text(
-                                  '${productsNotifier.getSelectedCustomer?.taxId ?? ""}',
-                                  style: testStyle(FontSize.s8,font2),    textDirection:
-                              pw.TextDirection.rtl
+                              pw.Text('${productsNotifier.getSelectedCustomer?.vatNumber ?? ""}',
+                                  style: testStyle(FontSize.s8,font2),
 
                               ),
                             ]
@@ -374,33 +371,72 @@ class InvoicePrintingNotifier extends ChangeNotifier{
                         crossAxisAlignment: pw.CrossAxisAlignment.end,
                         children: [
                           // Subtotal
-                          pw.Text(
-                              ''' :إجمالي قيمة القنا (SAR)${productsNotifier.getTotalSub?.toStringAsFixed(2)}''',
-                              style: testStyle(FontSize.s8, font2),
-                              textAlign: pw.TextAlign.center,    textDirection:
-                          pw.TextDirection.rtl
+                          pw.Row(
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Text(
+                                  'إجمالي قيمة القنا',
+                                  style: testStyle(FontSize.s8, font2),    textDirection:
+                              pw.TextDirection.rtl
+                              ),
+                              pw.Text(
+                                  ' :${productsNotifier.getTotalSub?.toStringAsFixed(2)} SAR',
+                                  style: testStyle(FontSize.s8, font2),
+                              ),
+                            ]
                           ),
+
                           pw.SizedBox(height: 5),
-                          pw.Text(
-                              ''':صافي الخصم (SAR)${productsNotifier.getTotalDisc?.toStringAsFixed(2)}''',
-                              style: testStyle(FontSize.s8, font2),
-                              textAlign: pw.TextAlign.center,    textDirection:
-                          pw.TextDirection.rtl
+                          pw.Row(
+                              mainAxisSize: pw.MainAxisSize.min,
+                              children: [
+                                pw.Text(
+                                    'صافي الخصم',
+                                    style: testStyle(FontSize.s8, font2),
+                                    textAlign: pw.TextAlign.center,    textDirection:
+                                pw.TextDirection.rtl
+                                ),
+                                pw.Text(
+                                  ' :${productsNotifier.getTotalDisc?.toStringAsFixed(2)} SAR',
+                                  style: testStyle(FontSize.s8, font2),
+                                ),
+                              ]
                           ),
+
                           pw.SizedBox(height: 5),
-                          pw.Text(
-                              ''':ضريبة (SAR)${productsNotifier.getTotalVat?.toStringAsFixed(2)}''',
-                              style: testStyle(FontSize.s8, font2),
-                              textAlign: pw.TextAlign.center,    textDirection:
-                          pw.TextDirection.rtl
+                          pw.Row(
+                              mainAxisSize: pw.MainAxisSize.min,
+                              children: [
+                                pw.Text(
+                                    ':ضريبة',
+                                    style: testStyle(FontSize.s8, font2),
+                                    textAlign: pw.TextAlign.center,    textDirection:
+                                pw.TextDirection.rtl
+                                ),
+                                pw.Text(
+                                  ' :${productsNotifier.getTotalVat?.toStringAsFixed(2)} SAR',
+                                  style: testStyle(FontSize.s8, font2),
+                                ),
+                              ]
                           ),
+
                           pw.SizedBox(height: 5),
-                          pw.Text(
-                              ''':صافي المستحق (SAR) ${productsNotifier.getTotalAmount?.toStringAsFixed(2)}''',
-                              style: testStyle(FontSize.s8, font2),
-                              textAlign: pw.TextAlign.center,    textDirection:
-                          pw.TextDirection.rtl
+                          pw.Row(
+                              mainAxisSize: pw.MainAxisSize.min,
+                              children: [
+                                pw.Text(
+                                    'صافي المستحق',
+                                    style: testStyle(FontSize.s8, font2),
+                                    textAlign: pw.TextAlign.center,    textDirection:
+                                pw.TextDirection.rtl
+                                ),
+                                pw.Text(
+                                  ' :${productsNotifier.getTotalAmount?.toStringAsFixed(2)} SAR',
+                                  style: testStyle(FontSize.s8, font2),
+                                ),
+                              ]
                           ),
+
                           pw.SizedBox(height: 5),
 
                         ],

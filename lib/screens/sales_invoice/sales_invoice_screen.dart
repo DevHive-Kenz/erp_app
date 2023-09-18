@@ -275,31 +275,30 @@ class SalesScreen extends HookWidget {
                         },
                       ),
                       kSizedBox8,
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormFieldCustom(
-                              controller: poDateController,
-                              hintName: "PO Date",
-                              isReadOnly: true,
-                              isValidate: false,
-
-                              onTap: () {
-
-                                    selectDate(dateTransfer:  poDateController);
-                              },
-                            ),
-                          ),
-                          kSizedW5,
-                          Expanded(
-                            child: TextFormFieldCustom(
-                              controller: poNumberController,
-                              hintName: "PO Number",
-                              isValidate: false,
-                            ),
-                          ),
-                        ],
+                      TextFormFieldCustom(
+                        controller: poNumberController,
+                        hintName: "PO Number",
+                        isValidate: false,
                       ),
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       child: TextFormFieldCustom(
+                      //         controller: poDateController,
+                      //         hintName: "PO Date",
+                      //         isReadOnly: true,
+                      //         isValidate: false,
+                      //
+                      //         onTap: () {
+                      //
+                      //               selectDate(dateTransfer:  poDateController);
+                      //         },
+                      //       ),
+                      //     ),
+                      //     kSizedW5,
+                      //
+                      //   ],
+                      // ),
                       kSizedBox20,
                       Center(
                         child: CustomButton(onTap: (){

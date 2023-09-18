@@ -5,7 +5,6 @@ part 'customer_result_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CustomerResultModel {
   final int? id;
-  @JsonKey(name: "user_id")final int? userID;
   final String? name;
   @JsonKey(name: "name_a")final String? nameArabic;
   final String? address1;
@@ -13,30 +12,34 @@ class CustomerResultModel {
   final String? address2;
   @JsonKey(name: "address2_a")final String? address2A;
   @JsonKey(name: "crn_number")final String? crnNumber;
+  @JsonKey(name: "vat_number")final String? vatNumber;
   @JsonKey(name: "is_customer")final bool? isCustomer;
   @JsonKey(name: "is_vendor")final bool? isVendor;
   @JsonKey(name: "is_employee")final bool? isEmployee;
   @JsonKey(name: "is_rep")final bool? isRep;
-  @JsonKey(name: "route_id")final int? routeId;
-  @JsonKey(name: "region_id")final int? regionId;
-  @JsonKey(name: "rep_id")final int? repId;
+  @JsonKey(name: "route")final int? routeId;
+  @JsonKey(name: "region")final int? regionId;
+  @JsonKey(name: "rep")final int? repId;
   @JsonKey(name: "tax_id")final String? taxId;
-  @JsonKey(name: "group_id")final int? groupId;
+  @JsonKey(name: "group")final int? groupId;
   @JsonKey(name: "price_list")final String? priceList;
+  @JsonKey(name: "user")final int? user;
+
 
 
   CustomerResultModel(
       {
     this.id,
-    this.userID,
     this.name,
-    this.nameArabic,
+        this.user,
+        this.nameArabic,
     this.address1,
     this.address1A,
     this.address2,
     this.address2A,
     this.crnNumber,
     this.isCustomer,
+        this.vatNumber,
     this.isVendor,
     this.isEmployee,
     this.isRep,
