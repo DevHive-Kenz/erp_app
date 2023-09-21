@@ -167,7 +167,12 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         bytes += generator.text('Tel: +919591708470',
             styles: PosStyles(align: PosAlign.center));
 
-
+        const utf8Encoder = Utf8Encoder();
+        final encodedStr = utf8Encoder.convert("فعاليبت يقعلارىسير يبسعىرسهيعب");
+        bytes += generator.textEncoded(Uint8List.fromList([
+          ...[ 0x1C, 0x43, 0xFF],
+          ...encodedStr
+        ]));
         bytes += generator.hr();
         bytes += generator.row([
           PosColumn(
