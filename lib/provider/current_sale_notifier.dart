@@ -21,12 +21,12 @@ class CurrentSaleNotifier extends ChangeNotifier{
   String? _poNumber;
   String? _poDate;
   String? _paymentMethod = "CASH";
-  double _vatPercent = 15;
+  double _vatPercent = 0;
   CustomerResultModel? _selectedCustomer;
   ProductResultModel? _selectedProduct;
   ProductBasePriceDataModel? _selectedPriceList;
   ProductUnitConversionDataModel? _selectedConversion;
-  ProductItemsModel? _selectedPriceFromConv;
+  ProductItemsModel? _selectedPriceFromConvItems;
   List _items = [];
 
   double? _totalDisc=0.00;
@@ -38,7 +38,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
   List get getItemList => _items;
   ProductResultModel? get getSelectedProduct => _selectedProduct;
   ProductBasePriceDataModel? get getSelectedPriceList => _selectedPriceList;
-  ProductItemsModel? get getSelectedPriceFromConv => _selectedPriceFromConv;
+  ProductItemsModel? get getSelectedPriceFromConvItems => _selectedPriceFromConvItems;
   double get getVatPercent => _vatPercent;
   ProductUnitConversionDataModel? get getSelectedConversion=> _selectedConversion;
   CustomerResultModel? get getSelectedCustomer => _selectedCustomer;
@@ -61,7 +61,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
   String? get getDisplayInvoiceID => _displayInvoiceId;
 
   void clearVariables(){
-    _selectedPriceFromConv = null;
+    _selectedPriceFromConvItems = null;
     _selectedConversion = null;
     _selectedPriceList=null;
     _selectedProduct=null;
@@ -90,12 +90,12 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _poNumber=null;
     _date=null;
     _displayInvoiceId=null;
-    _selectedPriceFromConv=null;
+    _selectedPriceFromConvItems=null;
     _selectedConversion=null;
     _selectedPriceList=null;
     _selectedProduct=null;
     _selectedCustomer=null;
-    _vatPercent=15;
+    _vatPercent=0;
     _paymentMethod="CASH";
     _items=[];
     notifyListeners();
@@ -109,7 +109,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _invoiceId = invoiceId;
     _date = date;
     _soldToName = soldToName;
-    _poNumber = poNumber;
+    _poNumber = poNumber ?? "---";
     _poDate = poDate;
     _selectedCustomer = dataCustomer;
 
@@ -145,7 +145,7 @@ class CurrentSaleNotifier extends ChangeNotifier{
   }
 
   set setPriceFromConversion (ProductItemsModel data){
-    _selectedPriceFromConv = data;
+    _selectedPriceFromConvItems = data;
 
     notifyListeners();
   }
@@ -160,11 +160,17 @@ class CurrentSaleNotifier extends ChangeNotifier{
     notifyListeners();
   }
 
+  void updateProductList(Map<String,dynamic> data,index){
+    _items[index] = data;
+    notifyListeners();
+  }
+
   void calculate(){
     _totalDisc=0.00;
     _totalVat=0.00;
     _totalQTY=0.00;
     _totalSub=0.00;
+    _totalAmount=0.00;
     for (var element in _items) {
        _totalDisc = (_totalDisc ?? 0.00) + (element["discount_amount"] ?? 0.00);
        _totalVat = (_totalVat ?? 0.00) + (element["tax_amount"] ?? 0.00);

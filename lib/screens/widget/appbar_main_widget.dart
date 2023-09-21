@@ -57,7 +57,7 @@ class MainAppBarWidget extends StatelessWidget {
                   kSizedW10,
                   Flexible(
                     child: Text(
-                      "Howdy, ${generalNotifier.getUserName}!!",
+                      "Hello, ${generalNotifier.getUserName}!!",
                       style: getBoldStyle(
                           color: ColorManager.primaryLight,
                           fontSize: FontSize.s20),

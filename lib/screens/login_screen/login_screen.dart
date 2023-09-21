@@ -66,7 +66,7 @@ class LoginScreen extends HookWidget {
                                 title: "Login",
                                 onTap: (){
                                   if(formKey.currentState?.validate() ??false ) {
-                                    snapshot.getLogin(context: context, username: userController.text , password: passController.text).then((value) {
+                                    snapshot.getLogin(context: context, username: userController.text.trim() , password: passController.text.trim()).then((value) {
                                      if(value == "OK"){
                                        Navigator.pushReplacementNamed(context, mainRoute);
                                      }

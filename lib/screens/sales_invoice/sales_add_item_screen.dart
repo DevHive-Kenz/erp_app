@@ -27,8 +27,8 @@ import '../widget/text_field_widget.dart';
 
 
 class SalesAddScreen extends HookWidget {
-  const SalesAddScreen({super.key});
-
+  const SalesAddScreen({super.key,this.editIndex});
+  final int? editIndex;
   @override
   Widget build(BuildContext context) {
     final searchProduct = Provider.of<SearchProvider>(context);
@@ -49,11 +49,35 @@ class SalesAddScreen extends HookWidget {
     ValueNotifier<double> disTotal = useState<double>(0.00);
     ValueNotifier<double> vatTotal = useState<double>(0.00);
 
+
+    void preFillData(){
+      if(editIndex != null){
+        itemNameController.text = currentNotifier.getItemList[editIndex!]["item"];
+        qtyController.text = currentNotifier.getItemList[editIndex!]["quantity"].toString();
+        unitController.text = currentNotifier.getItemList[editIndex!]["unit"].toString();
+        rateController.text = currentNotifier.getItemList[editIndex!]["price"].toString();
+        priceListController.text =currentNotifier.getItemList[editIndex!]["priceList"].toString();
+        discountPercentController.text =currentNotifier.getItemList[editIndex!]["discount"].toString();
+        discountFixedController.text = currentNotifier.getItemList[editIndex!]["discountFixed"].toString();
+        taxPercentController.text = "${currentNotifier.getItemList[editIndex!]["tax"]}% VAT";
+        subtotal.value = currentNotifier.getItemList[editIndex!]["subTotal"];
+        vatTotal.value = currentNotifier.getItemList[editIndex!]["tax_amount"];
+        disTotal.value = currentNotifier.getItemList[editIndex!]["discount_amount"];
+        ///notifier setting
+        currentNotifier.setVatPercent = currentNotifier.getItemList[editIndex!]["tax"].toString();
+        currentNotifier.setProduct = currentNotifier.getItemList[editIndex!]["productModel"];
+        currentNotifier.setPriceList = currentNotifier.getItemList[editIndex!]["priceListModel"];
+        currentNotifier.setConversion = currentNotifier.getItemList[editIndex!]["conversionModel"];
+        currentNotifier.setPriceFromConversion = currentNotifier.getItemList[editIndex!]["fromConversionItemModel"];
+
+      }
+    }
+
     useEffect(() {
 
       Future.microtask(() {
        searchProduct.initializeProductList(productNotifier.getProductModelData?.result ?? []);
-
+        preFillData();
       },);
 
       return null;
@@ -136,13 +160,16 @@ class SalesAddScreen extends HookWidget {
                                               return GestureDetector(
                                                 onTap: () {
                                                   currentNotifier.setConversion = data!;
+                                                  taxPercentController.clear();
+                                                  disTotal.value = 0.00;
+                                                  vatTotal.value = 0.00;
                                                   data.items?.forEach((element) {
                                                     if(element.id.toString() == currentNotifier.getSelectedPriceList?.id){
                                                       currentNotifier.setPriceFromConversion = element;
                                                     }
                                                   });
                                                   qtyController.text = "1";
-                                                  rateController.text = currentNotifier.getSelectedPriceFromConv?.standardLimitPrice ?? "0.00";
+                                                  rateController.text = currentNotifier.getSelectedPriceFromConvItems?.standardLimitPrice ?? "0.00";
                                                   unitController.text = data.toUnitName ?? "";
                                                   subtotal.value = double.parse(rateController.text ?? "0.00");
                                                   searchProduct.changeSearchString("");
@@ -193,7 +220,6 @@ class SalesAddScreen extends HookWidget {
             builder:
                 (BuildContext context) {
               return SingleChildScrollView(
-                controller: scrollController,
                 child: LayoutBuilder(
                     builder: (BuildContextcontext, BoxConstraints constraints) {
                       bool isSmallScreen = MediaQuery.of(context).size.width < 800;
@@ -234,6 +260,9 @@ class SalesAddScreen extends HookWidget {
                                               ProductBasePriceDataModel? data = currentNotifier.getSelectedProduct?.basePriceData?[index];
                                               return GestureDetector(
                                                 onTap: () {
+                                                  taxPercentController.clear();
+                                                  disTotal.value = 0.00;
+                                                  vatTotal.value = 0.00;
                                                   currentNotifier.setPriceList = data!;
                                                   priceListController.text = data.name ?? "";
                                                   searchProduct.changeSearchString("");
@@ -336,7 +365,7 @@ class SalesAddScreen extends HookWidget {
                                               onTap: () {
                                                 clearVariables();
                                                 currentNotifier.setProduct = data;
-                                                itemNameController.text = "${data.name}\n${data.nameArabic}";
+                                                itemNameController.text = "${data.name}";
                                                 searchProduct.changeSearchString("");
                                                 Navigator.pop(context);
                                                 selectPriceListFun();
@@ -449,14 +478,17 @@ class SalesAddScreen extends HookWidget {
             );
           });
     }
+
     return  Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
+            controller: scrollController,
+
             child: Column(
               children: [
                 MainAppBarWidget(
                     isFirstPage: false,
-                    title: "Add the product"
+                    title: editIndex != null ? "Edit Product":"Add the product"
                 ),
                 kSizedBox10,
                 Padding(
@@ -523,12 +555,13 @@ class SalesAddScreen extends HookWidget {
                                   inputType: TextInputType.number,
                                   hintName: "Quantity",
                                   focus: qtyFocus,
-
                                   onChanged: (value){
                                     if(value.isNotEmpty){
                                       double val = double.parse(value);
                                       if(val>0 && rateController.text.isNotEmpty){
                                         subtotal.value = val * double.parse(rateController.text);
+                                        disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                        vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
                                       }else{
                                         showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
                                         qtyController.clear();
@@ -547,13 +580,13 @@ class SalesAddScreen extends HookWidget {
                                   validator:  (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter rate';
-                                    }else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00")){
+                                    }else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00")){
                                       // showAwesomeDialogue(title: "Warning", content: 'Please enter a price below \n ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}', type: DialogType.WARNING);
 
-                                      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}';
-                                    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00")){
+                                      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00"}';
+                                    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00")){
                                  // showAwesomeDialogue(title: "Warning", content: 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}', type: DialogType.WARNING);
-                                    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}';
+                                    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00"}';
                                     }
                                     return null;
                                   },
@@ -562,6 +595,9 @@ class SalesAddScreen extends HookWidget {
                                       double val = double.parse(value);
                                       if(val>0 && qtyController.text.isNotEmpty){
                                         subtotal.value = val * double.parse(qtyController.text);
+                                        disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                        vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+
                                       }else{
                                         showAwesomeDialogue(title: "INFO", content: "Rate & Quantity should be larger than zero", type: DialogType.INFO);
                                         qtyController.clear();
@@ -610,7 +646,7 @@ class SalesAddScreen extends HookWidget {
                                 inputType: TextInputType.number,
                                 onTap: (){
                                   SchedulerBinding.instance.addPostFrameCallback((_) {
-                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
+                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.fastOutSlowIn);
                                   });
                                 },
                                 onChanged: (value){
@@ -621,6 +657,8 @@ class SalesAddScreen extends HookWidget {
                                   if(value.isNotEmpty && value != "." ){
                                     if(numericRegex.hasMatch(value)) {
                                       disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                      vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+
                                     }else{
                                       discountPercentController.text=="0.00";
                                       showAwesomeDialogue(title: "Input Error", content: "Only 'digits(0-9)' and '.' is allowed in this field", type: DialogType.INFO);
@@ -639,7 +677,7 @@ class SalesAddScreen extends HookWidget {
                                 inputType: TextInputType.number,
                                 onTap: (){
                                   SchedulerBinding.instance.addPostFrameCallback((_) {
-                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
+                                    scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.fastOutSlowIn);
                                   });
                                 },
                                 onChanged: (value){
@@ -649,6 +687,8 @@ class SalesAddScreen extends HookWidget {
                                   if(value.isNotEmpty && value != "." ){
                                     if(numericRegex.hasMatch(value)) {
                                       disTotal.value = double.parse(value);
+                                      vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+
                                     }else{
                                       discountFixedController.text=="0.00";
                                       showAwesomeDialogue(title: "Input Error", content: "Only 'digits(0-9)' and '.' is allowed in this field", type: DialogType.INFO);
@@ -724,29 +764,75 @@ class SalesAddScreen extends HookWidget {
                           children: [
                             Center(
                               child: CustomButton(onTap: (){
-                                currentNotifier.setProductList = {
-                                  "item": itemNameController.text,
-                                  "quantity": double.parse(qtyController.text),
-                                  "unit":unitController.text,
-                                  "price": double.parse(rateController.text),
-                                  "tax":currentNotifier.getVatPercent,
-                                  "tax_amount":vatTotal.value,
-                                  "discount": double.parse(discountPercentController.text),
-                                  "discount_amount": disTotal.value,
-                                  "total_amount": subtotal.value + vatTotal.value - disTotal.value,
-                                  "subTotal":subtotal.value
-
-                                };
+                                if(editIndex !=null){
+                                  currentNotifier.updateProductList({
+                                    "item": itemNameController.text,
+                                    "quantity": double.parse(qtyController.text),
+                                    "unit":unitController.text,
+                                    "price": double.parse(rateController.text),
+                                    "tax":currentNotifier.getVatPercent,
+                                    "tax_amount":vatTotal.value,
+                                    "discount": double.parse(discountPercentController.text),
+                                    "discount_amount": disTotal.value,
+                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                    "subTotal":subtotal.value,
+                                    "priceList":priceListController.text,
+                                    "discountFixed":discountFixedController.text,
+                                    "priceListModel":currentNotifier.getSelectedPriceList,
+                                    "productModel":currentNotifier.getSelectedProduct,
+                                    "conversionModel":currentNotifier.getSelectedConversion,
+                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                  }, editIndex);
+                                }else {
+                                  currentNotifier.setProductList = {
+                                    "item": itemNameController.text,
+                                    "quantity": double.parse(qtyController.text),
+                                    "unit":unitController.text,
+                                    "price": double.parse(rateController.text),
+                                    "tax":currentNotifier.getVatPercent,
+                                    "tax_amount":vatTotal.value,
+                                    "discount": double.parse(discountPercentController.text),
+                                    "discount_amount": disTotal.value,
+                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                    "subTotal":subtotal.value,
+                                    "priceList":priceListController.text,
+                                    "discountFixed":discountFixedController.text,
+                                    "priceListModel":currentNotifier.getSelectedPriceList,
+                                    "productModel":currentNotifier.getSelectedProduct,
+                                    "conversionModel":currentNotifier.getSelectedConversion,
+                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                  };
+                                }
                                 clearVariables();
                                 currentNotifier.clearVariables();
                                 currentNotifier.calculate();
 
                                 Navigator.pop(context);
-                              }, title: "Save & Exit",width: 100.w,height: 40.h,),
+                              }, title: "Save & Exit",width: 100.w,height: 60.h,),
                             ),
                             Center(
                               child: CustomButton(onTap: (){
-                                currentNotifier.setProductList = {
+                                if(editIndex !=null){
+                                  currentNotifier.updateProductList({
+                                    "item": itemNameController.text,
+                                    "quantity": double.parse(qtyController.text),
+                                    "unit":unitController.text,
+                                    "price": double.parse(rateController.text),
+                                    "tax":currentNotifier.getVatPercent,
+                                    "tax_amount":vatTotal.value,
+                                    "discount": double.parse(discountPercentController.text),
+                                    "discount_amount": disTotal.value,
+                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                    "subTotal":subtotal.value,
+                                    "priceList":priceListController.text,
+                                    "discountFixed":discountFixedController.text,
+                                    "priceListModel":currentNotifier.getSelectedPriceList,
+                                    "productModel":currentNotifier.getSelectedProduct,
+                                    "conversionModel":currentNotifier.getSelectedConversion,
+                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                  }, editIndex);
+                                }else {
+                                  currentNotifier.setProductList = {
                                   "item": itemNameController.text,
                                   "quantity": double.parse(qtyController.text),
                                   "unit":unitController.text,
@@ -756,13 +842,20 @@ class SalesAddScreen extends HookWidget {
                                   "discount": double.parse(discountPercentController.text),
                                   "discount_amount": disTotal.value,
                                   "total_amount": subtotal.value + vatTotal.value - disTotal.value,
-                                  "subTotal":subtotal.value
+                                  "subTotal":subtotal.value,
+                                  "priceList":priceListController.text,
+                                  "discountFixed":discountFixedController.text,
+                                  "priceListModel":currentNotifier.getSelectedPriceList,
+                                  "productModel":currentNotifier.getSelectedProduct,
+                                  "conversionModel":currentNotifier.getSelectedConversion,
+                                  "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
                                 };
+                                }
                                 clearVariables();
                                 currentNotifier.clearVariables();
                                 currentNotifier.calculate();
 
-                              }, title: "Save & Add",width: 100.w,height: 40.h,),
+                              }, title: "Save & Add",width: 100.w,height: 60.h,),
                             ),
                           ],
                         )

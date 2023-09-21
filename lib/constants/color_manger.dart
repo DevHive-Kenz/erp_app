@@ -22,7 +22,7 @@ class ColorManager {
   static Color onBackground = HexColor.fromHex("#303030");
   static Color white = HexColor.fromHex("#FFFFFF");
   static Color black = HexColor.fromHex("#000000");
-  static Color red = HexColor.fromHex("#F44336");
+  static Color red = HexColor.fromHex("#FF0000");
   static Color green = HexColor.fromHex("#4CAF50");
   static Color grey = HexColor.fromHex("#4F4F4F");
   static Color grey1 = HexColor.fromHex("#4F4F4F");
@@ -31,7 +31,7 @@ class ColorManager {
   static Color grey5 = HexColor.fromHex("#E0E0E0");
   static Color greyFill = HexColor.fromHex("#F3F3F3");
   static Color blueFill = HexColor.fromHex("##96CAF9");
-  static Color filledColor = HexColor.fromHex("#F5F6FA");
+  static Color filledColor = HexColor.fromHex("#F9F6FD");
   static Color filledColor2 = HexColor.fromHex("#d3d7e8");
 
 }

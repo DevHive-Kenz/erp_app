@@ -9,6 +9,7 @@ import '../../../../constants/constants.dart';
 import '../../../../constants/string_manager.dart';
 import '../../../../provider/general_notifier.dart';
 import '../../../models/sales_return_model/sales_return_model.dart';
+import '../../../provider/current_sale_notifier.dart';
 import '../../api/sales_api/sales_return_api.dart';
 import '../../service/shared_preferance_service.dart';
 
@@ -36,11 +37,12 @@ class SeriesFetchNotifier extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       // final generalNotifier = context.read<GeneralNotifier>();
-
+      final currentNotifier = context.read<CurrentSaleNotifier>();
       final listData = await _seriesFetchAPI.seriesFetch(type: type);
 
       if(listData["status"] == 200){
         _seriesFetch= listData["result"].toString();
+        currentNotifier.clearAll();
         _isLoading = false;
 
         notifyListeners();
@@ -48,7 +50,7 @@ class SeriesFetchNotifier extends ChangeNotifier {
       }else{
         _isLoading = false;
         notifyListeners();
-        showAwesomeDialogue(title: "Warning", content: "Please try againr", type: DialogType.WARNING,);
+        showAwesomeDialogue(title: "Warning", content: "Please try again", type: DialogType.WARNING,);
       }
 
       _isLoading = false;

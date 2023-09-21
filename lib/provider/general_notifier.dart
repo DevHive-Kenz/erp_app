@@ -12,10 +12,17 @@ class GeneralNotifier extends ChangeNotifier {
 
   String? _userName;
 
+  String? _bluetoothPrinterMacId;
+
 
   int get getAxisCount => _axisCount;
   String? get getUserName => _userName;
+  String? get getBluetoothPrinterMacID => _bluetoothPrinterMacId;
 
+   set bluetoothPrinterMacId(String macID){
+    _bluetoothPrinterMacId = macID;
+    notifyListeners();
+  }
 
   Future<void> checkAxisCount({required BuildContext context})async {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -38,8 +45,7 @@ class GeneralNotifier extends ChangeNotifier {
   Future<void> getUserNameFun() async {
     CacheService cashService = CacheService();
     _userName = await cashService.readCache(key: AppStrings.userName);
-notifyListeners();
-
+    notifyListeners();
   }
 
 

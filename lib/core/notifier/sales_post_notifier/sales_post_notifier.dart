@@ -37,7 +37,7 @@ class SalesPostNotifier extends ChangeNotifier {
       // final generalNotifier = context.read<GeneralNotifier>();
        final currentNotifier = context.read<CurrentSaleNotifier>();
        final profileNotifier = context.read<ProfileNotifier>();
-
+      currentNotifier.calculate();
       final listData = await _salesPostApi.salePostApi(
           user: profileNotifier.getProfile?.result?[0].userId ?? 0,
           soldTo:currentNotifier.getSelectedCustomer?.id ?? 0,
@@ -57,7 +57,6 @@ class SalesPostNotifier extends ChangeNotifier {
 
       if(listData["status"] == 200 || listData["status"] == 201){
         _isLoading = false;
-
         notifyListeners();
         return "OK";
       }else{
@@ -65,7 +64,6 @@ class SalesPostNotifier extends ChangeNotifier {
         notifyListeners();
         showAwesomeDialogue(title: "Warning", content: "Please try again", type: DialogType.WARNING,);
       }
-
       _isLoading = false;
       notifyListeners();
     } catch(error){

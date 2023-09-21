@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import '../constants/color_manger.dart';
@@ -32,11 +33,21 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _permissions();
       _asyncMethod();
     });
 super.initState();
   }
 
+  _permissions(){
+    [
+      Permission.location,
+      Permission.storage,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ].request();
+  }
   _asyncMethod() async {
     await Future.wait([
      context.read<GeneralNotifier>().checkAxisCount(context: context),

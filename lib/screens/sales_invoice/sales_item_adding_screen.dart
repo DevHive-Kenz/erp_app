@@ -8,6 +8,7 @@ import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
 import 'package:kenz_app/provider/current_sale_notifier.dart';
+import 'package:kenz_app/screens/sales_invoice/sales_add_item_screen.dart';
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -41,69 +42,7 @@ class SalesItemAddingScreen extends HookWidget {
 
      },[]);
     return  Scaffold(
-      // appBar: PreferredSize(
-      //   preferredSize:  Size(double.infinity, 150.h),
-      //   child: SafeArea(
-      //     child: Container(
-      //       decoration: BoxDecoration(
-      //         color: ColorManager.white,
-      //         borderRadius: BorderRadius.only(
-      //             bottomRight: Radius.circular(12.r),
-      //             bottomLeft: Radius.circular(12.r)),
-      //         boxShadow: [
-      //           BoxShadow(
-      //             color: Colors.grey,
-      //             offset: Offset(0.0, 1.0), //(x,y)
-      //             blurRadius: 6.0,
-      //           ),
-      //         ],
-      //       ),
-      //       height: 90.h,
-      //
-      //       child: Padding(
-      //         padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
-      //         child: Row(
-      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //           children: [
-      //             Flexible(
-      //               child: Row(
-      //                 children: [
-      //                   InkWell(
-      //                     onTap: () => Navigator.pop(context),
-      //                     child: Icon(Icons.arrow_back_rounded),
-      //                   ),
-      //                   kSizedW10,
-      //                   Flexible(
-      //                     child: Text(
-      //                       currentSaleNotifier.getSoldToName ?? "",
-      //                       overflow: TextOverflow.ellipsis,
-      //                       style: getBoldStyle(
-      //                           color: ColorManager.primaryLight,
-      //                           fontSize: FontSize.s20),
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //             // IconButton(onPressed: (){
-      //             //
-      //             //   context.read<InvoicePrintingNotifier>().printInvoice(context: context);
-      //             // }, icon: Icon(Icons.print))
-      //             // Row(
-      //             //   children: [
-      //             //     IconButton(onPressed: (){}, icon: Icon(Icons.save)),
-      //             //     IconButton(onPressed: (){
-      //             //
-      //             //       context.read<InvoicePrintingNotifier>().printInvoice(context: context);
-      //             //     }, icon: Icon(Icons.print))
-      //             //   ],
-      //             // )
-      //           ],
-      //         ),
-      //       ),
-      //     )
-      //   ),
-      // ),
+
       body: SafeArea(
         child: Stack(
           children: [
@@ -159,48 +98,53 @@ class SalesItemAddingScreen extends HookWidget {
                               itemCount: snapshot.getItemList.length,
                               itemBuilder: (context, index) {
                                 Map<String,dynamic> data = snapshot.getItemList[index];
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
-                                  child: Container(
-                                    padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      color: ColorManager.greyFill,
+                                return InkWell(
+                                  onLongPress: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => SalesAddScreen(editIndex: index,))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+                                    child: Container(
+                                      padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        color: ColorManager.greyFill,
 
+                                      ),
+                                      child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                        padding: EdgeInsets.symmetric(horizontal: AppPadding.p6,vertical: AppPadding.p6),
+                                                        decoration: BoxDecoration(
+                                                            color: ColorManager.white,
+                                                            borderRadius: BorderRadius.circular(8.r)
+                                                        ),
+                                                        child: Text("#${index +1}",style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s10,))
+
+                                                    ),
+                                                    kSizedW5,
+                                                    Text(data["item"],style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14,))
+                                                  ],
+                                                ),
+                                                Text("${data["total_amount"].toStringAsFixed(2)} SAR",style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14,))
+
+                                              ],
+                                            ),
+                                            // ProductCardRow(title: "item Subtotal",content: "${data["quantity"]} ${data["unit"]} x ${data["price"]} = ${data["subTotal"]} SAR",),
+                                            ProductCardRow(title: "QTY",content: " ${data["quantity"]} ${data["unit"]}",),
+                                            kSizedBox2,
+                                            ProductCardRow(title: "item Subtotal",content: " ${data["subTotal"]} SAR",),
+                                            kSizedBox2,
+                                            ProductCardRow(title: "Discount:",content: data["discount_amount"].toStringAsFixed(2),),
+                                            kSizedBox2,
+                                            ProductCardRow(title: "Total VAT@${data["tax"]}%:",content: "${data["tax_amount"].toStringAsFixed(2)} SAR",)
+
+                                          ]),
                                     ),
-                                    child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: AppPadding.p6,vertical: AppPadding.p6),
-                                                      decoration: BoxDecoration(
-                                                          color: ColorManager.white,
-                                                          borderRadius: BorderRadius.circular(8.r)
-                                                      ),
-                                                      child: Text("#${index +1}",style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s10,))
-
-                                                  ),
-                                                  kSizedW5,
-                                                  Text(data["item"],style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14,))
-                                                ],
-                                              ),
-                                              Text("${data["total_amount"].toStringAsFixed(2)} SAR",style: getSemiBoldStyle(color: ColorManager.black,fontSize: FontSize.s14,))
-
-                                            ],
-                                          ),
-                                          // ProductCardRow(title: "item Subtotal",content: "${data["quantity"]} ${data["unit"]} x ${data["price"]} = ${data["subTotal"]} SAR",),
-                                          ProductCardRow(title: "item Subtotal",content: " ${data["subTotal"]} SAR",),
-                                          kSizedBox2,
-                                          ProductCardRow(title: "Discount:",content: data["discount_amount"].toStringAsFixed(2),),
-                                          kSizedBox2,
-                                          ProductCardRow(title: "Total VAT@${data["tax"]}%:",content: "${data["tax_amount"].toStringAsFixed(2)} SAR",)
-
-                                        ]),
                                   ),
                                 );
                               }, separatorBuilder: (BuildContext context, int index) {
@@ -454,19 +398,16 @@ class SalesItemAddingScreen extends HookWidget {
                                   btnOkText: "yes",
                                   btnOkOnPress: () async {
                                     isLoading.value =true;
-                                   await context.read<SalesPostNotifier>().salesPost(context: context).then((value) {
+                                   await context.read<SalesPostNotifier>().salesPost(context: context).then((value) async {
                                      if(value == "OK"){
                                        Navigator.pushNamed(context, homeRoute);
-                                       context.read<InvoicePrintingNotifier>().printInvoice(context: context);
-
+                                       await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context);
                                      }
                                     });
                                     isLoading.value =false;
-
                                   },
                                   btnOkColor: ColorManager.primaryLight)
                                   .show();
-
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: AppPadding.p16),

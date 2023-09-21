@@ -35,7 +35,6 @@ class ProductNotifier extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       // final generalNotifier = context.read<GeneralNotifier>();
-
       final listData = await _productsApi.product();
        print("eeeeee ${listData["status"]}");
       if(listData["status"] == 200){

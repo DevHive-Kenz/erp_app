@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:kenz_app/constants/font_manager.dart';
+import 'package:kenz_app/constants/values_manger.dart';
 
 import '../../constants/color_manger.dart';
 import '../../constants/style_manager.dart';
@@ -30,6 +31,7 @@ class CustomButton extends StatelessWidget {
         child: Container(
             height: height.h,
             width:width.w,
+            padding: EdgeInsets.symmetric(horizontal: AppPadding.p6),
             decoration: BoxDecoration(
               gradient:  LinearGradient(
                 begin: Alignment.topLeft,

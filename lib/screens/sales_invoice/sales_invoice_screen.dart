@@ -100,66 +100,17 @@ class SalesScreen extends HookWidget {
       body: SafeArea(
           child: Form(
             key: formKey,
-            child: Column(
+            child: SingleChildScrollView(
+              child: Column(
         children: [
-            MainAppBarWidget(
-                isFirstPage: false,
-                title: "Sales"
-            ),
-            kSizedBox10,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
-              child: Container(
-                padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.r),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Invoice Details",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
-                    kSizedBox20,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-                 Column(
-
-                       children: [
-                         Text("Invoice No",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
-                         kSizedBox8,
-                         Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",style: getSemiBoldStyle(color: ColorManager.black,),)
-                       ],
-                       ),
-      Column(
-        children: [
-              Text("Invoice Date",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
-              kSizedBox8,
-              InkWell(
-                  onTap: () {
-                selectDate(dateTransferText: invoiceDateController);
-              },
-              child: Text(invoiceDateController.value,style: getSemiBoldStyle(color: ColorManager.black,),))
-        ],
-      )
-    ],
-    ),
-                  ],
-                )
-
+              MainAppBarWidget(
+                  isFirstPage: false,
+                  title: "Sales"
               ),
-            ),
-            kSizedBox10,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
-              child: Container(
+              kSizedBox10,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+                child: Container(
                   padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.r),
@@ -175,157 +126,209 @@ class SalesScreen extends HookWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Customer Selection",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
+                      Text("Invoice Details",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
                       kSizedBox20,
-                      TextFormFieldCustom(
-                        controller: customerController,
-                        hintName: "Customer *",
-                        isReadOnly: true,
-                        onTap: (){
-                          showModalBottomSheet(
-                              backgroundColor:
-                              Colors.transparent,
-                              context: context,
-                              elevation: 500,
-                              isScrollControlled: true,
-                              shape:
-                              const RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              clipBehavior: Clip.hardEdge,
-                              builder:
-                                  (BuildContext context) {
-                                return SingleChildScrollView(
-                                  child: LayoutBuilder(
-                                      builder: (BuildContextcontext, BoxConstraints constraints) {
-                                        bool isSmallScreen = MediaQuery.of(context).size.width < 800;
-                                        double widthFactor = isSmallScreen ? 1.0 : 0.7;
-                                        return FractionallySizedBox(
-                                          widthFactor: widthFactor,
-                                          child: StatefulBuilder(
-                                              builder: (BuildContextcontext, setModalState) {
-                                                return Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                                                  ),
-                                                  child: Container(
-                                                      alignment: Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
-                                                          )),
-                                                      height: 500.h,
-                                                      padding: const EdgeInsets.symmetric(
-                                                          horizontal: AppPadding.p8),
-                                                      child:  Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          kSizedBox15,
-                                                          Text(
-                                                            "Search Customer",
-                                                            style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
-                                                          ),
-                                                          kSizedBox10,
-                                                          CupertinoSearchTextField(
-                                                            onChanged: (value) {
-                                                              setModalState(() {
-                                                                searchCustomer.changeSearchString(value);
-                                                              });
-                                                            },
-                                                            autofocus: true,
-                                                          ),
-                                                          kSizedBox20,
-                                                          Expanded(
-                                                            child: ListView.separated(
-                                                                separatorBuilder: (context, index) {
-                                                                  return const Divider();
-                                                                },
-                                                                itemCount: searchCustomer.getCustomerList.length,
-                                                                itemBuilder: (context, index) {
-                                                                  CustomerResultModel data = searchCustomer.getCustomerList[index];
-                                                                  return GestureDetector(
-                                                                    onTap: () {
-                                                                      customerController.text = "${data.name.toString()}\n${data.nameArabic.toString()}";
-                                                                      selectedCustomerID.value = data.id;
-                                                                      selectedCustomer.value = data;
-                                                                      searchCustomer.changeSearchString("");
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                      child:  Text(
-                                                                        "${data.name.toString()}\n${data.nameArabic.toString()}",
-                                                                        style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                }),
-                                                          ),
-                                                        ],
-                                                      ),),
-                                                );
-                                              }),
-                                        );
-                                      }),
-                                );
-                              });
-                        },
-                      ),
-                      kSizedBox8,
-                      TextFormFieldCustom(
-                        controller: poNumberController,
-                        hintName: "PO Number",
-                        isValidate: false,
-                      ),
-                      // Row(
-                      //   children: [
-                      //     Expanded(
-                      //       child: TextFormFieldCustom(
-                      //         controller: poDateController,
-                      //         hintName: "PO Date",
-                      //         isReadOnly: true,
-                      //         isValidate: false,
-                      //
-                      //         onTap: () {
-                      //
-                      //               selectDate(dateTransfer:  poDateController);
-                      //         },
-                      //       ),
-                      //     ),
-                      //     kSizedW5,
-                      //
-                      //   ],
-                      // ),
-                      kSizedBox20,
-                      Center(
-                        child: CustomButton(onTap: (){
-                          if(formKey.currentState?.validate() ?? false) {
-                            context.read<CurrentSaleNotifier>().setSalesFirstData(
-                              user: profileNotifier.getProfile?.result?[0].userId ?? 0,
-                              date: invoiceTimeStamp.value,
-                              invoiceId: int.parse(seriesFetchNotifier.getSeriesFetch ?? "0"),
-                              displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",
-                              printType: "thermal",
-                              soldTo: selectedCustomerID.value, soldToName: customerController.text.split(" ").first,
-                              poNumber: poNumberController.text,
-                              poDate: poDateController.text, dataCustomer: selectedCustomer.value!,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                   Column(
 
-                            );
-
-                            Navigator.pushNamed(context, salesItemAdding);
-                          }
-                        }, title: "Next",width: 100.w,height: 40.h,),
-                      )
-                    ],
-                  ),
-
-
-              ),
-            )
+                         children: [
+                           Text("Invoice No",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
+                           kSizedBox8,
+                           Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",style: getSemiBoldStyle(color: ColorManager.black,),)
+                         ],
+                         ),
+      Column(
+        children: [
+                Text("Invoice Date",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
+                kSizedBox8,
+                InkWell(
+                    onTap: () {
+                  selectDate(dateTransferText: invoiceDateController);
+                },
+                child: Text(invoiceDateController.value,style: getSemiBoldStyle(color: ColorManager.black,),))
         ],
+      )
+    ],
+    ),
+                    ],
+                  )
+
+                ),
+              ),
+              kSizedBox10,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+                child: Container(
+                    padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0.0, 1.0), //(x,y)
+                          blurRadius: 6.0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Customer Selection",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
+                        kSizedBox20,
+                        TextFormFieldCustom(
+                          controller: customerController,
+                          hintName: "Customer *",
+                          isReadOnly: true,
+                          onTap: (){
+                            showModalBottomSheet(
+                                backgroundColor:
+                                Colors.transparent,
+                                context: context,
+                                elevation: 500,
+                                isScrollControlled: true,
+                                shape:
+                                const RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                builder:
+                                    (BuildContext context) {
+                                  return SingleChildScrollView(
+                                    child: LayoutBuilder(
+                                        builder: (BuildContextcontext, BoxConstraints constraints) {
+                                          bool isSmallScreen = MediaQuery.of(context).size.width < 800;
+                                          double widthFactor = isSmallScreen ? 1.0 : 0.7;
+                                          return FractionallySizedBox(
+                                            widthFactor: widthFactor,
+                                            child: StatefulBuilder(
+                                                builder: (BuildContextcontext, setModalState) {
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                                                    ),
+                                                    child: Container(
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0),
+                                                            )),
+                                                        height: 500.h,
+                                                        padding: const EdgeInsets.symmetric(
+                                                            horizontal: AppPadding.p8),
+                                                        child:  Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            kSizedBox15,
+                                                            Text(
+                                                              "Search Customer",
+                                                              style: getSemiBoldStyle(color: ColorManager.black, fontSize: FontSize.s16),
+                                                            ),
+                                                            kSizedBox10,
+                                                            CupertinoSearchTextField(
+                                                              onChanged: (value) {
+                                                                setModalState(() {
+                                                                  searchCustomer.changeSearchString(value);
+                                                                });
+                                                              },
+                                                              autofocus: true,
+                                                            ),
+                                                            kSizedBox20,
+                                                            Expanded(
+                                                              child: ListView.separated(
+                                                                  separatorBuilder: (context, index) {
+                                                                    return const Divider();
+                                                                  },
+                                                                  itemCount: searchCustomer.getCustomerList.length,
+                                                                  itemBuilder: (context, index) {
+                                                                    CustomerResultModel data = searchCustomer.getCustomerList[index];
+                                                                    return GestureDetector(
+                                                                      onTap: () {
+                                                                        FocusManager.instance.primaryFocus?.unfocus();
+                                                                        customerController.text = "${data.name.toString()}\n${data.nameArabic.toString()}";
+                                                                        selectedCustomerID.value = data.id;
+                                                                        selectedCustomer.value = data;
+                                                                        searchCustomer.changeSearchString("");
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                      child: Container(
+                                                                        padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
+                                                                        child:  Text(
+                                                                          "${data.name.toString()}\n${data.nameArabic.toString()}",
+                                                                          style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  }),
+                                                            ),
+                                                          ],
+                                                        ),),
+                                                  );
+                                                }),
+                                          );
+                                        }),
+                                  );
+                                });
+                          },
+                        ),
+                        kSizedBox8,
+                        TextFormFieldCustom(
+                          controller: poNumberController,
+                          hintName: "PO Number",
+                          isValidate: false,
+                        ),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: TextFormFieldCustom(
+                        //         controller: poDateController,
+                        //         hintName: "PO Date",
+                        //         isReadOnly: true,
+                        //         isValidate: false,
+                        //
+                        //         onTap: () {
+                        //
+                        //               selectDate(dateTransfer:  poDateController);
+                        //         },
+                        //       ),
+                        //     ),
+                        //     kSizedW5,
+                        //
+                        //   ],
+                        // ),
+                        kSizedBox20,
+                        Center(
+                          child: CustomButton(onTap: (){
+                            if(formKey.currentState?.validate() ?? false) {
+                              context.read<CurrentSaleNotifier>().setSalesFirstData(
+                                user: profileNotifier.getProfile?.result?[0].userId ?? 0,
+                                date: invoiceTimeStamp.value,
+                                invoiceId: int.parse(seriesFetchNotifier.getSeriesFetch ?? "0"),
+                                displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",
+                                printType: "thermal",
+                                soldTo: selectedCustomerID.value, soldToName: customerController.text.split(" ").first,
+                                poNumber: poNumberController.text,
+                                poDate: poDateController.text, dataCustomer: selectedCustomer.value!,
+
+                              );
+
+                              Navigator.pushNamed(context, salesItemAdding);
+                            }
+                          }, title: "Next",width: 100.w,height: 50.h,),
+                        )
+                      ],
+                    ),
+
+
+                ),
+              )
+        ],
+              ),
             ),
           )
 

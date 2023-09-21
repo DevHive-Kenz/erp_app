@@ -57,9 +57,13 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.0.11
   hive_generator: ^2.0.0
-  printing: ^5.11.0
+#  printing: ^5.11.0
   flutter_html_to_pdf: ^0.7.0
   qr_flutter: ^4.1.0
+  esc_pos_utils: ^1.1.0
+  flutter_blue_plus: ^1.15.8
+  bluetooth_thermal_printer: ^0.0.6
+  permission_handler: ^10.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
