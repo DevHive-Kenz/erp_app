@@ -45,8 +45,8 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       bytes += generator.text( profileNotifier.getProfile?.result?[0].companyName?? "",
           styles: PosStyles(
             align: PosAlign.center,
-            height: PosTextSize.size3,
-            width: PosTextSize.size3,
+            height: PosTextSize.size2,
+            width: PosTextSize.size2,
           ),
           linesAfter: 1);
       bytes += generator.text(
@@ -158,7 +158,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       bytes += generator.row([
         PosColumn(
             text: ' ',
-            width: 6,
+            width: 4,
             styles: const PosStyles(
               align: PosAlign.left,
               height: PosTextSize.size2,
@@ -166,7 +166,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             )),
         PosColumn(
             text: "Subtotal (SAR) : ${productsNotifier.getTotalSub?.toStringAsFixed(2)}",
-            width: 6,
+            width: 8,
             styles: PosStyles(
               align: PosAlign.right,
               height: PosTextSize.size1,
@@ -176,7 +176,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       bytes += generator.row([
         PosColumn(
             text: ' ',
-            width: 6,
+            width: 4,
             styles: const PosStyles(
               align: PosAlign.left,
               height: PosTextSize.size2,
@@ -184,7 +184,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             )),
         PosColumn(
             text: "Discount (SAR) : ${productsNotifier.getTotalDisc?.toStringAsFixed(2)}",
-            width: 6,
+            width: 8,
             styles: PosStyles(
               align: PosAlign.right,
               height: PosTextSize.size1,
@@ -194,7 +194,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       bytes += generator.row([
         PosColumn(
             text: ' ',
-            width: 6,
+            width: 4,
             styles: const PosStyles(
               align: PosAlign.left,
               height: PosTextSize.size2,
@@ -202,7 +202,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             )),
         PosColumn(
             text: "VAT (SAR) : ${productsNotifier.getTotalVat?.toStringAsFixed(2)}",
-            width: 6,
+            width: 8,
             styles: PosStyles(
               align: PosAlign.right,
               height: PosTextSize.size1,
@@ -212,7 +212,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       bytes += generator.row([
         PosColumn(
             text: ' ',
-            width: 6,
+            width: 4,
             styles: const PosStyles(
               align: PosAlign.left,
               height: PosTextSize.size2,
@@ -220,7 +220,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             )),
         PosColumn(
             text: "Net Due (SAR) : ${productsNotifier.getTotalAmount?.toStringAsFixed(2)}",
-            width: 6,
+            width: 8,
             styles: PosStyles(
               align: PosAlign.right,
               height: PosTextSize.size1,
@@ -235,6 +235,10 @@ class InvoicePrintingNotifier extends ChangeNotifier{
           invoiceVAT: (productsNotifier.getTotalVat ?? 0.00).toStringAsFixed(2));
       bytes += generator.qrcode(dataQrCode,size: QRSize.Size1);
       bytes += generator.hr(linesAfter: 1);
+      bytes += generator.text('VAT:${profileNotifier.getProfile?.result?[0].companyVat}',
+          styles: PosStyles(align: PosAlign.center, bold: true));
+      bytes += generator.text('CRN:${profileNotifier.getProfile?.result?[0].companyCrn}',
+          styles: PosStyles(align: PosAlign.center, bold: true));
       bytes += generator.text('Thank you for your business',
           styles: PosStyles(align: PosAlign.center, bold: true));
 

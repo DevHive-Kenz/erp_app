@@ -49,6 +49,7 @@ super.initState();
     ].request();
   }
   _asyncMethod() async {
+    context.read<GeneralNotifier>().setIsLoading = true;
     await Future.wait([
      context.read<GeneralNotifier>().checkAxisCount(context: context),
      context.read<GeneralNotifier>().getUserNameFun(),
@@ -56,6 +57,8 @@ super.initState();
       context.read<ProfileNotifier>().profile(context: context),
       context.read<CustomerNotifier>().customer(context: context),
     ]);
+    context.read<GeneralNotifier>().setIsLoading = false;
+
   }
 
   final pages = <Widget>[

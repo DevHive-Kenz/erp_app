@@ -115,13 +115,18 @@ isLoading.value = false;
                   ),
                 ],
               ),
-              isLoading.value ? Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        color: const Color(0x66ffffff),
-                        child: const CircularProgressIndicatorWidget(),
-                      ))):kSizedBox
+
+               Consumer<GeneralNotifier>(
+                builder: (context, snapshot,_) {
+                  return snapshot.getIsLoading || isLoading.value ?  Positioned.fill(
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            color: const Color(0x66ffffff),
+                            child: const CircularProgressIndicatorWidget(),
+                          ))):kSizedBox;
+                }
+              )
             ],
           ),
         ),

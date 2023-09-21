@@ -296,7 +296,6 @@ class SalesAddScreen extends HookWidget {
 
     ///item select
     void productDetailFun(){
-
       showModalBottomSheet(
           backgroundColor:
           Colors.transparent,
@@ -525,7 +524,7 @@ class SalesAddScreen extends HookWidget {
                               Expanded(
                                 child: TextFormFieldCustom(
                                   controller: priceListController,
-                                  hintName: "Select Price List",
+                                  hintName: "Select Price List *",
                                   isReadOnly: true,
                                   onTap: (){
                                     selectPriceListFun();
@@ -536,7 +535,7 @@ class SalesAddScreen extends HookWidget {
                               Expanded(
                                 child: TextFormFieldCustom(
                                   controller: unitController,
-                                  hintName: "Select Unit",
+                                  hintName: "Select Unit *",
 
                                   isReadOnly: true,
                                   onTap: (){
@@ -553,7 +552,7 @@ class SalesAddScreen extends HookWidget {
                                 child: TextFormFieldCustom(
                                   controller: qtyController,
                                   inputType: TextInputType.number,
-                                  hintName: "Quantity",
+                                  hintName: "Quantity *",
                                   focus: qtyFocus,
                                   onChanged: (value){
                                     if(value.isNotEmpty){
@@ -580,28 +579,33 @@ class SalesAddScreen extends HookWidget {
                                   validator:  (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter rate';
-                                    }else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00")){
-                                      // showAwesomeDialogue(title: "Warning", content: 'Please enter a price below \n ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}', type: DialogType.WARNING);
-
-                                      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00"}';
-                                    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00")){
-                                 // showAwesomeDialogue(title: "Warning", content: 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}', type: DialogType.WARNING);
-                                    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00"}';
                                     }
+                                 //    else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00")){
+                                 //      // showAwesomeDialogue(title: "Warning", content: 'Please enter a price below \n ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}', type: DialogType.WARNING);
+                                 //
+                                 //      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00"}';
+                                 //    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00")){
+                                 // // showAwesomeDialogue(title: "Warning", content: 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}', type: DialogType.WARNING);
+                                 //    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00"}';
+                                 //    }
                                     return null;
                                   },
                                   onChanged: (value){
                                     if(value.isNotEmpty){
                                       double val = double.parse(value);
-                                      if(val>0 && qtyController.text.isNotEmpty){
-                                        subtotal.value = val * double.parse(qtyController.text);
-                                        disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
-                                        vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+                                      subtotal.value = val * double.parse(qtyController.text);
+                                      disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                      vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
 
-                                      }else{
-                                        showAwesomeDialogue(title: "INFO", content: "Rate & Quantity should be larger than zero", type: DialogType.INFO);
-                                        qtyController.clear();
-                                      }
+                                      // if(val>0 && qtyController.text.isNotEmpty){
+                                      //   subtotal.value = val * double.parse(qtyController.text);
+                                      //   disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                      //   vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+                                      //
+                                      // }else{
+                                      //   showAwesomeDialogue(title: "INFO", content: "Rate & Quantity should be larger than zero", type: DialogType.INFO);
+                                      //   qtyController.clear();
+                                      // }
                                     }
 
                                   },

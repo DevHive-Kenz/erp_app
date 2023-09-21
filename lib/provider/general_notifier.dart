@@ -11,11 +11,13 @@ class GeneralNotifier extends ChangeNotifier {
   int _axisCount = 2;
 
   String? _userName;
+  bool _isLoading = false;
 
   String? _bluetoothPrinterMacId;
 
 
   int get getAxisCount => _axisCount;
+  bool get getIsLoading => _isLoading;
   String? get getUserName => _userName;
   String? get getBluetoothPrinterMacID => _bluetoothPrinterMacId;
 
@@ -23,7 +25,10 @@ class GeneralNotifier extends ChangeNotifier {
     _bluetoothPrinterMacId = macID;
     notifyListeners();
   }
-
+set setIsLoading(bool val){
+     _isLoading = val;
+     notifyListeners();
+}
   Future<void> checkAxisCount({required BuildContext context})async {
     double screenWidth = MediaQuery.of(context).size.width;
 
