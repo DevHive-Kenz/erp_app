@@ -10,11 +10,13 @@ class ProductItemsModel {
   @JsonKey(name: "low_limit_price")final String? lowLimitPrice;
   @JsonKey(name: "max_limit_price")final String? maxLimitPrice;
   @JsonKey(name: "standard_limit_price")final String? standardLimitPrice;
+ final String? name;
   final int? id;
   ProductItemsModel(
       {this.lowLimitPrice,
       this.maxLimitPrice,
       this.standardLimitPrice,
+        this.name,
       this.id});
 
 

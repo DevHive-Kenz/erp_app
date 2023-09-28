@@ -15,8 +15,8 @@ class ProductUnitConversionDataModel {
   final List? barcode;
   final List<ProductItemsModel>? items;
 
-  ProductUnitConversionDataModel(this.toUnitName,
-      {this.qty, this.price, this.toUnit, this.barcode, this.items});
+  ProductUnitConversionDataModel(
+      {this.toUnitName,this.qty, this.price, this.toUnit, this.barcode, this.items});
 
 
   factory ProductUnitConversionDataModel.fromJson(Map<String, dynamic> json) =>

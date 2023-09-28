@@ -19,6 +19,8 @@ import 'package:kenz_app/screens/widget/appbar_main_widget.dart';
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:image/image.dart' as im;
+import 'package:screenshot/screenshot.dart';
 
 import '../../../constants/color_manger.dart';
 import '../../../constants/constants.dart';
@@ -190,6 +192,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         try{
           List<int>? bytes = await getTicket();
          await BluetoothThermalPrinter.writeBytes(bytes!);
+
         }catch(e){
         }
         return "OK";
@@ -276,14 +279,16 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                                             setState(() {
                                               name = d.localName;
                                             });
-                                            setConnect(d.remoteId.toString()).then((value) {
-                                              printTicket().then((value) {
-                                                if(value == "OK"){
-                                                  context.read<GeneralNotifier>().bluetoothPrinterMacId = d.remoteId.toString();
-                                                  showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
-                                                }
-                                              });
-                                            });
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:d.remoteId.toString(),title: "Preview",)));
+
+                                            // setConnect(d.remoteId.toString()).then((value) {
+                                            //   printTicket().then((value) {
+                                            //     if(value == "OK"){
+                                            //       context.read<GeneralNotifier>().bluetoothPrinterMacId = d.remoteId.toString();
+                                            //       showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
+                                            //     }
+                                            //   });
+                                            // });
                                           });
                                         }, title: "Connect"
                                          );
@@ -316,15 +321,16 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                             setState(() {
                               name = r.device.localName;
                             });
-                            setConnect(r.device.remoteId.toString()).then((value) {
-
-                              printTicket().then((value) {
-                                if(value == "OK"){
-                                  context.read<GeneralNotifier>().bluetoothPrinterMacId = r.device.remoteId.toString();
-                                  showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
-                                }
-                              });
-                            });
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:r.device.remoteId.toString() ,title: "Preview",)));
+                            // setConnect(r.device.remoteId.toString()).then((value) {
+                            //
+                            //   printTicket().then((value) {
+                            //     if(value == "OK"){
+                            //       context.read<GeneralNotifier>().bluetoothPrinterMacId = r.device.remoteId.toString();
+                            //       showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
+                            //     }
+                            //   });
+                            // });
                           });
 
 
@@ -394,3 +400,248 @@ String prettyException(String prefix, dynamic e) {
 ///
 ///
 ///
+class PrintIII extends StatefulWidget {
+  const PrintIII({Key? key, required this.title,required this.mac}) : super(key: key);
+  final String title;
+  final String mac;
+
+  @override
+  State<PrintIII> createState() => _PrintIIIState();
+}
+
+class _PrintIIIState extends State<PrintIII> {
+  ScreenshotController screenshotController = ScreenshotController();
+  String dir = Directory.current.path;
+  bool connected = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(dir);
+    // this func to cheeck if port are close or not
+    setConnect(widget.mac);
+  }
+
+  Future<void> setConnect(String mac) async {
+    final String? result = await BluetoothThermalPrinter.connect(mac);
+    print("state conneected $result");
+    if (result == "true") {
+      setState(() {
+        connected = true;
+      });
+    }
+  }
+
+  Future<List<int>> getTicket(Uint8List theimageThatComesfr) async {
+    List<int> bytes = [];
+    CapabilityProfile profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm80, profile);
+    bytes += generator.text("Demo Shop",
+        styles: PosStyles(
+          align: PosAlign.center,
+          height: PosTextSize.size3,
+          width: PosTextSize.size3,
+        ),
+        linesAfter: 1);
+    final im.Image? image = im.decodeImage(theimageThatComesfr);
+    // bytes += generator.image(image!);
+    generator.imageRaster(image!, imageFn: PosImageFn.graphics);
+    bytes += generator.cut();
+    return bytes;
+  }
+
+  Future<void> printTicket(Uint8List theimageThatComesfr) async {
+    String? isConnected = await BluetoothThermalPrinter.connectionStatus;
+    if (isConnected == "true") {
+      List<int> bytes = await getTicket(theimageThatComesfr);
+      final result = await  BluetoothThermalPrinter.writeBytes(bytes);
+      print("Print $result");
+    } else {
+      //Hadnle Not Connected Senario
+    }
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("معاينة الوصل قبل الطباعة "),
+      ),
+      body: Center(
+          child: ListView(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    child: Text(
+                      'print res',
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    onPressed:connected ?  () {
+                      screenshotController
+                          .capture(delay: Duration(milliseconds: 10))
+                          .then((capturedImage) async {
+                         Uint8List theimageThatComesfromThePrinter = capturedImage!;
+                        setState(() {
+                          theimageThatComesfromThePrinter = capturedImage;
+                          theimageThatComesfromThePrinter.isNotEmpty ?  showSnackBar(context: context, text: "image is taken ${theimageThatComesfromThePrinter.length}") : null;
+                          printTicket(theimageThatComesfromThePrinter);
+                        });
+                      }).catchError((onError) {
+                        print(onError);
+                      });
+                    }:null,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Screenshot(
+                    controller: screenshotController,
+                    child: Container(
+                        width: 460,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "محمد نعم 臺灣  ",
+                                  style: TextStyle(
+                                      fontSize: 50, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                              mainAxisAlignment: MainAxisAlignment.center,
+                            ),
+                            Text(
+                                "----------------------------------------------------------------------------------"),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "(  汉字 )",
+                                    style: TextStyle(
+                                        fontSize: 40, fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "رقم الطلب",
+                                    style: TextStyle(
+                                        fontSize: 30, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                              child: Text(
+                                  "-------------------------------------------------------------------------------------"),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      "التفاصيل",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 6,
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      "السعر ",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 2,
+                                ),
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      "العدد",
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  flex: 2,
+                                ),
+                              ],
+                            ),
+                            ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              physics: ScrollPhysics(),
+                              itemCount: 4,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            "臺灣",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ),
+                                        flex: 6,
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            "تجربة عيوني انتة ",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ),
+                                        flex: 2,
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            "Test My little pice of huny",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ),
+                                        flex: 2,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            Text(
+                                "----------------------------------------------------------------------------------"),
+                          ],
+                        )),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                ],
+              ),
+            ],
+          )),
+    );
+  }
+}

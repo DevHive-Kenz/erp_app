@@ -1,14 +1,15 @@
 
 import 'package:kenz_app/screens/home_screen/home_screen.dart';
+import '../screens/home_screen/sales_invoice/sales_add_item_screen.dart';
+import '../screens/home_screen/sales_invoice/sales_invoice_screen.dart';
+import '../screens/home_screen/sales_invoice/sales_item_adding_screen.dart';
 import '../screens/home_screen/settings/bluetooth_printer_setup_screen.dart';
 import '../screens/home_screen/settings/printer_settings_screen.dart';
 import '../screens/home_screen/settings/settings_screen.dart';
+import '../screens/home_screen/total_invoice/total_invoice_screen.dart';
 import '../screens/login_screen/intro.dart';
 import '../screens/login_screen/login_screen.dart';
 import '../screens/main_sceen.dart';
-import '../screens/sales_invoice/sales_add_item_screen.dart';
-import '../screens/sales_invoice/sales_invoice_screen.dart';
-import '../screens/sales_invoice/sales_item_adding_screen.dart';
 
 
 const String mainRoute = "/mainRoute";
@@ -21,6 +22,7 @@ const String salesItemAdding = "/salesItemAdding";
 const String salesAddScreen = "/salesAddScreen";
 const String printerSettingsScreen = "/printerSettingsScreen";
 const String bluetoothPrinterScreen = "/bluetoothPrinterScreen";
+const String totalInvoice = "/totalInvoice";
 
 
 
@@ -37,5 +39,6 @@ final routes = {
   salesAddScreen: (context) =>  const SalesAddScreen(),
   printerSettingsScreen: (context) =>  const PrinterSettingsScreen(),
   bluetoothPrinterScreen: (context) =>  const BluetoothPrinterScreen(),
+  totalInvoice: (context) =>  const TotalInvoice(),
 
 };

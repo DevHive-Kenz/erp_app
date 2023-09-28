@@ -11,6 +11,7 @@ import '../core/notifier/profile_notifier/profile_notifier.dart';
 import '../core/notifier/sales_post_notifier/sales_post_notifier.dart';
 import '../core/notifier/sales_return_notifier/sales_return_notifier.dart';
 import '../core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
+import '../core/notifier/total_invoice/total_invoice_notifier.dart';
 import 'current_sale_notifier.dart';
 import 'dataBase_fetch_notifier.dart';
 import 'database_functionalities_notifier.dart';
@@ -37,15 +38,14 @@ List<SingleChildWidget> providersList = [
   ChangeNotifierProvider(create: (_) => InvoicePrintingNotifier()),
   ChangeNotifierProvider(create: (_) => SalesPostNotifier()),
 
-
   ///product
   ChangeNotifierProvider(create: (_) => CustomerNotifier()),
-
-
 
   ///profile
   ChangeNotifierProvider(create: (_) => ProfileNotifier()),
 
+  ///total invoice
+  ChangeNotifierProvider(create: (_) => TotalInvoiceNotifier()),
 
 
 

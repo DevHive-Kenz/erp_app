@@ -11,6 +11,7 @@ ProductItemsModel _$ProductItemsModelFromJson(Map<String, dynamic> json) =>
       lowLimitPrice: json['low_limit_price'] as String?,
       maxLimitPrice: json['max_limit_price'] as String?,
       standardLimitPrice: json['standard_limit_price'] as String?,
+      name: json['name'] as String?,
       id: json['id'] as int?,
     );
 
@@ -19,5 +20,6 @@ Map<String, dynamic> _$ProductItemsModelToJson(ProductItemsModel instance) =>
       'low_limit_price': instance.lowLimitPrice,
       'max_limit_price': instance.maxLimitPrice,
       'standard_limit_price': instance.standardLimitPrice,
+      'name': instance.name,
       'id': instance.id,
     };

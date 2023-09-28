@@ -24,9 +24,10 @@ class CurrentSaleNotifier extends ChangeNotifier{
   double _vatPercent = 0;
   CustomerResultModel? _selectedCustomer;
   ProductResultModel? _selectedProduct;
-  ProductBasePriceDataModel? _selectedPriceList;
+  ProductItemsModel? _selectedPriceList;
   ProductUnitConversionDataModel? _selectedConversion;
   ProductItemsModel? _selectedPriceFromConvItems;
+  List<ProductUnitConversionDataModel> _uomWithBase = [];
   List _items = [];
 
   double? _totalDisc=0.00;
@@ -37,11 +38,12 @@ class CurrentSaleNotifier extends ChangeNotifier{
 
   List get getItemList => _items;
   ProductResultModel? get getSelectedProduct => _selectedProduct;
-  ProductBasePriceDataModel? get getSelectedPriceList => _selectedPriceList;
+  ProductItemsModel? get getSelectedPriceList => _selectedPriceList;
   ProductItemsModel? get getSelectedPriceFromConvItems => _selectedPriceFromConvItems;
   double get getVatPercent => _vatPercent;
   ProductUnitConversionDataModel? get getSelectedConversion=> _selectedConversion;
   CustomerResultModel? get getSelectedCustomer => _selectedCustomer;
+  List<ProductUnitConversionDataModel> get getUOMWithBase => _uomWithBase;
 
   double? get getTotalDisc => _totalDisc;
   double? get getTotalVat => _totalVat;
@@ -60,19 +62,25 @@ class CurrentSaleNotifier extends ChangeNotifier{
   String? get getPoDate => _poDate;
   String? get getDisplayInvoiceID => _displayInvoiceId;
 
+
   void clearVariables(){
     _selectedPriceFromConvItems = null;
     _selectedConversion = null;
     _selectedPriceList=null;
     _selectedProduct=null;
     _vatPercent = 15;
+    _uomWithBase=[];
     notifyListeners();
+
+    print(_uomWithBase);
   }
 
   void clearList(){
     _items = [];
         notifyListeners();
   }
+
+
 
   void clearAll(){
     clearVariables();
@@ -98,6 +106,8 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _vatPercent=0;
     _paymentMethod="CASH";
     _items=[];
+    _uomWithBase=[];
+
     notifyListeners();
   }
 
@@ -121,11 +131,29 @@ class CurrentSaleNotifier extends ChangeNotifier{
 
   set setProduct (ProductResultModel data){
     _selectedProduct = data;
+    print("qwe ${data.unitConversionData?.length}");
     notifyListeners();
   }
 
-  set setPriceList(ProductBasePriceDataModel data){
+  set setUOMWithBase(List<ProductUnitConversionDataModel> uomWithBase){
+    _uomWithBase =[];
+    _uomWithBase = uomWithBase;
+    notifyListeners();
+  }
+
+  set setPriceList(ProductItemsModel data){
     _selectedPriceList = data;
+    _uomWithBase = _selectedProduct?.unitConversionData ?? [];
+    if (!_uomWithBase.any((item) => item.toUnit == (_selectedProduct?.baseUnitName ?? ""))) {
+      _uomWithBase.add(ProductUnitConversionDataModel(
+        price: null,
+        qty: "1",
+        barcode: [],
+        toUnit: _selectedProduct?.baseUnitName ?? "",
+        toUnitName: _selectedProduct?.baseUnitName ?? "",
+        items: _selectedProduct?.basePriceData ?? [],
+      ));
+    }
     notifyListeners();
   }
 

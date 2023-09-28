@@ -13,12 +13,12 @@ import 'package:kenz_app/core/notifier/profile_notifier/profile_notifier.dart';
 import 'package:kenz_app/core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:provider/provider.dart';
-import '../../constants/app_routes.dart';
-import '../../models/customer_model/customer_result_model.dart';
-import '../../provider/current_sale_notifier.dart';
-import '../../provider/search_notifier.dart';
-import '../widget/appbar_main_widget.dart';
-import '../widget/text_field_widget.dart';
+import '../../../constants/app_routes.dart';
+import '../../../models/customer_model/customer_result_model.dart';
+import '../../../provider/current_sale_notifier.dart';
+import '../../../provider/search_notifier.dart';
+import '../../widget/appbar_main_widget.dart';
+import '../../widget/text_field_widget.dart';
 
 
 

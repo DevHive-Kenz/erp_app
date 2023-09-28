@@ -9,6 +9,7 @@ part of 'product_result_model.dart';
 ProductResultModel _$ProductResultModelFromJson(Map<String, dynamic> json) =>
     ProductResultModel(
       id: json['id'] as int?,
+      baseUnitName: json['base_unit_name'] as String?,
       sku: json['sku'] as String?,
       added: json['added'] == null
           ? null
@@ -33,8 +34,7 @@ ProductResultModel _$ProductResultModelFromJson(Map<String, dynamic> json) =>
       price: json['price'] as num?,
       barCode: json['bar_code'] as List<dynamic>?,
       basePriceData: (json['base_price_data'] as List<dynamic>?)
-          ?.map((e) =>
-              ProductBasePriceDataModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => ProductItemsModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       unitConversionData: (json['unit_conversion_data'] as List<dynamic>?)
           ?.map((e) => ProductUnitConversionDataModel.fromJson(
@@ -54,6 +54,7 @@ Map<String, dynamic> _$ProductResultModelToJson(ProductResultModel instance) =>
       'category_id': instance.categoryId,
       'item_code': instance.itemCode,
       'base_unit_id': instance.baseUnitId,
+      'base_unit_name': instance.baseUnitName,
       'tax_category_id': instance.taxCategoryId,
       'bln_active': instance.blnActive,
       'bln_stocked': instance.blnStocked,

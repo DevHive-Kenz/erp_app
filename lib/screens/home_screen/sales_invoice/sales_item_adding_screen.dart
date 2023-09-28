@@ -8,16 +8,16 @@ import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
 import 'package:kenz_app/provider/current_sale_notifier.dart';
-import 'package:kenz_app/screens/sales_invoice/sales_add_item_screen.dart';
+import 'package:kenz_app/screens/home_screen/sales_invoice/sales_add_item_screen.dart';
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/app_routes.dart';
-import '../../core/notifier/sales_post_notifier/sales_post_notifier.dart';
-import '../../provider/sales_printing_notifier.dart';
-import '../widget/Circular_progress_indicator_widget.dart';
-import '../widget/appbar_main_widget.dart';
-import '../widget/text_field_widget.dart';
+import '../../../constants/app_routes.dart';
+import '../../../core/notifier/sales_post_notifier/sales_post_notifier.dart';
+import '../../../provider/sales_printing_notifier.dart';
+import '../../widget/Circular_progress_indicator_widget.dart';
+import '../../widget/appbar_main_widget.dart';
+import '../../widget/text_field_widget.dart';
 
 class SalesItemAddingScreen extends HookWidget {
   const SalesItemAddingScreen({super.key});

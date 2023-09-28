@@ -9,7 +9,7 @@ part of 'product_unit_conversion_model.dart';
 ProductUnitConversionDataModel _$ProductUnitConversionDataModelFromJson(
         Map<String, dynamic> json) =>
     ProductUnitConversionDataModel(
-      json['unit_name'] as String?,
+      toUnitName: json['unit_name'] as String?,
       qty: json['qty'] as String?,
       price: json['price'] as String?,
       toUnit: json['to_unit'] as String?,

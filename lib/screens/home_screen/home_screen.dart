@@ -6,6 +6,7 @@ import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
+import 'package:kenz_app/core/notifier/total_invoice/total_invoice_notifier.dart';
 import 'package:kenz_app/provider/general_notifier.dart';
 import 'package:kenz_app/screens/widget/appbar_main_widget.dart';
 import 'package:kenz_app/screens/widget/square_tile_widget.dart';
@@ -63,23 +64,29 @@ class HomeScreen extends HookWidget {
                               crossAxisCount: generalNotifier.getAxisCount,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              children: List.generate(2, (index) {
-                                String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":"Add";
+                              children: List.generate(3, (index) {
+                                String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":"Add";
                                 return SquareTileWidget(
-                                  icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :Icons.add,
+                                  icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:Icons.add,
                                   index: index,
                                   onTap: () async {
                                     print(index);
                                     if(index==0){
-isLoading.value = true;
+                                      isLoading.value = true;
                                       await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE");
-isLoading.value = false;
-
-                                      Navigator.pushNamed(context, sales);
-
-
+                                      isLoading.value = false;
+                                        Navigator.pushNamed(context, sales);
                                     }else if (index == 1){
 
+                                    }else if (index == 2){
+                                      isLoading.value = true;
+                                      await context.read<TotalInvoiceNotifier>().totalInvoiceFetch(context: context).then((value){
+                                        if(value == "OK"){
+                                          Navigator.pushNamed(context, totalInvoice);
+                                        }
+
+                                      });
+                                      isLoading.value = false;
 
                                     }
                                   },

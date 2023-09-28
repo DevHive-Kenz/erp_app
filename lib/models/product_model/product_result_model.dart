@@ -19,6 +19,7 @@ class ProductResultModel {
   @JsonKey(name: "category_id") final int? categoryId;
   @JsonKey(name: "item_code") final String? itemCode;
   @JsonKey(name: "base_unit_id") final int? baseUnitId;
+  @JsonKey(name: "base_unit_name") final String? baseUnitName;
   @JsonKey(name: "tax_category_id") final int? taxCategoryId;
   @JsonKey(name: "bln_active") final bool? blnActive;
   @JsonKey(name: "bln_stocked") final bool? blnStocked;
@@ -31,13 +32,14 @@ class ProductResultModel {
   @JsonKey(name: "discounted_price") final num? discountedPrice;
   @JsonKey(name: "price") final num? price;
   @JsonKey(name: "bar_code") final List? barCode;
-  @JsonKey(name: "base_price_data") final List<ProductBasePriceDataModel>? basePriceData;
+  @JsonKey(name: "base_price_data") final List<ProductItemsModel>? basePriceData;
   @JsonKey(name: "unit_conversion_data") final List<ProductUnitConversionDataModel>? unitConversionData;
 
 
   ProductResultModel(
       {this.id,
-      this.sku,
+        this.baseUnitName,
+        this.sku,
       this.added,
       this.userID,
       this.name,
