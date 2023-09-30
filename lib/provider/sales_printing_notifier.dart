@@ -21,6 +21,7 @@ import '../constants/font_manager.dart';
 import '../constants/string_manager.dart';
 import '../constants/values_manger.dart';
 import '../core/service/shared_preferance_service.dart';
+import '../screens/home_screen/settings/bluetooth_printer_setup_screen.dart';
 import 'general_notifier.dart';
 import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
 
@@ -30,8 +31,6 @@ class InvoicePrintingNotifier extends ChangeNotifier{
   bool _isDone = false;
 
   bool get getIsDone => _isDone;
-
-
 
   Future<List<int>> makeBluetoothInvoice({required BuildContext context}) async {
 
@@ -43,20 +42,28 @@ class InvoicePrintingNotifier extends ChangeNotifier{
 
 
       bytes += generator.text( profileNotifier.getProfile?.result?[0].companyName?? "",
-          styles: PosStyles(
+          styles: const PosStyles(
+            align: PosAlign.center,
+            height: PosTextSize.size3,
+            width: PosTextSize.size3,
+            bold: true
+          ),
+          linesAfter: 1);
+      bytes += generator.text( "Tax Invoice",
+          styles: const PosStyles(
             align: PosAlign.center,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
+              bold: true
           ),
           linesAfter: 1);
-
       bytes += generator.text(
           "${profileNotifier.getProfile?.result?[0].companyAddress1 ?? ""}\n${profileNotifier.getProfile?.result?[0].companyAddress2 ?? ""}",
           styles: PosStyles(align: PosAlign.left));
       bytes += generator.text('VAT:${profileNotifier.getProfile?.result?[0].companyVat}',
-          styles: PosStyles(align: PosAlign.center, bold: true));
+          styles: PosStyles(align: PosAlign.left, bold: true));
       bytes += generator.text('CRN:${profileNotifier.getProfile?.result?[0].companyCrn}',
-          styles: PosStyles(align: PosAlign.center, bold: true));
+          styles: PosStyles(align: PosAlign.left, bold: true));
       bytes += generator.hr();
       bytes += generator.text(
           productsNotifier.getSelectedCustomer?.name ?? "",
@@ -73,7 +80,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
         PosColumn(
             text: 'Invoice',
             width: 3,
-            styles: PosStyles(align: PosAlign.left, bold: true)),
+            styles: PosStyles(align: PosAlign.left, bold: true,)),
         PosColumn(
             text: 'Date',
             width: 3,
@@ -87,7 +94,24 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             width: 3,
             styles: PosStyles(align: PosAlign.right, bold: true)),
       ]);
-      generator.feed(2);
+      bytes += generator.row([
+        PosColumn(
+            text: ' ',
+            width: 3,
+            styles: PosStyles(align: PosAlign.left, bold: true,)),
+        PosColumn(
+            text: ' ',
+            width: 3,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 3,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 3,
+            styles: PosStyles(align: PosAlign.right, bold: true)),
+      ]);
       bytes += generator.row([
         PosColumn(text:  productsNotifier.getDisplayInvoiceID ?? "",
             width: 3, styles: const PosStyles(
@@ -136,8 +160,32 @@ class InvoicePrintingNotifier extends ChangeNotifier{
             width: 2,
             styles: PosStyles(align: PosAlign.right, bold: true)),
       ]);
-      generator.feed(2);
-
+      bytes += generator.row([
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.left, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.center, bold: true)),
+        PosColumn(
+            text: ' ',
+            width: 2,
+            styles: PosStyles(align: PosAlign.right, bold: true)),
+      ]);
       productsNotifier.getItemList.forEach((data) {
         bytes += generator.row([
           PosColumn(text:  data["item"] ?? "", width: 2, styles: const PosStyles(
@@ -267,21 +315,20 @@ class InvoicePrintingNotifier extends ChangeNotifier{
       String? isConnected = await BluetoothThermalPrinter.connectionStatus;
 
       if (isConnected == "true") {
-
         List<int> bytes = await makeBluetoothInvoice(context: context);
-
         await BluetoothThermalPrinter.writeBytes(bytes);
-
       } else {
         // showAwesomeDialogue(title: "Print Error", content: "Could not print at this moment, please try again after connecting printer", type: DialogType.ERROR);
-        Navigator.pushNamed(context, bluetoothPrinterScreen );
+        // Navigator.pushNamed(context, bluetoothPrinterScreen );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => BluetoothPrinterScreen(isAccessInside: true,)));
         //Hadnle Not Connected Senario
       }
      }else{
-       showAwesomeDialogue(title: "Print Warning", content: "Please connect Printer through settings", type: DialogType.ERROR);
-       Navigator.pushNamed(context, bluetoothPrinterScreen );
+       showAwesomeDialogue(title: "Print Warning", content: "Please connect Printer through settings" , type: DialogType.INFO);
+       Navigator.push(context, MaterialPageRoute(builder: (context) => BluetoothPrinterScreen(isAccessInside: true,)));
 
-     }
+
+    }
   }
 
   // Future<void> printInvoice({required BuildContext context}) async {

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kenz_app/constants/app_routes.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
 import 'package:kenz_app/provider/general_notifier.dart';
@@ -25,6 +26,7 @@ import 'package:screenshot/screenshot.dart';
 import '../../../constants/color_manger.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/font_manager.dart';
+import '../../../provider/sales_printing_notifier.dart';
 
 final snackBarKeyA = GlobalKey<ScaffoldMessengerState>();
 final snackBarKeyB = GlobalKey<ScaffoldMessengerState>();
@@ -57,8 +59,8 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 }
 
 class BluetoothPrinterScreen extends StatelessWidget {
-  const BluetoothPrinterScreen({Key? key}) : super(key: key);
-
+  const BluetoothPrinterScreen({Key? key,this.isAccessInside = false}) : super(key: key);
+ final bool isAccessInside ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +70,7 @@ class BluetoothPrinterScreen extends StatelessWidget {
           builder: (c, snapshot) {
             final adapterState = snapshot.data;
             if (adapterState == BluetoothAdapterState.on) {
-              return const FindDevicesScreen();
+              return  FindDevicesScreen(isAccessInside: isAccessInside,);
             } else {
               FlutterBluePlus.stopScan();
               return BluetoothOffScreen(adapterState: adapterState);
@@ -126,8 +128,8 @@ class BluetoothOffScreen extends StatelessWidget {
 }
 
 class FindDevicesScreen extends StatefulWidget {
-  const FindDevicesScreen({Key? key}) : super(key: key);
-
+  const FindDevicesScreen({Key? key,required this.isAccessInside}) : super(key: key);
+  final bool isAccessInside;
   @override
   State<FindDevicesScreen> createState() => _FindDevicesScreenState();
 }
@@ -190,10 +192,17 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
 
       if (isConnected == "true") {
         try{
-          List<int>? bytes = await getTicket();
-         await BluetoothThermalPrinter.writeBytes(bytes!);
+          if(widget.isAccessInside == true){
+            await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context).then((value) {
+              Navigator.pushReplacementNamed(context, homeRoute);
+            });
+          }else {
+            List<int>? bytes = await getTicket();
+            await BluetoothThermalPrinter.writeBytes(bytes!);
+          }
 
-        }catch(e){
+        }catch(e){  await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context);
+print(e);
         }
         return "OK";
       } else {
@@ -279,15 +288,20 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                                             setState(() {
                                               name = d.localName;
                                             });
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:d.remoteId.toString(),title: "Preview",)));
+                                            // Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:d.remoteId.toString(),title: "Preview",)));
 
+                                            setConnect(d.remoteId.toString()).then((value) {
+                                              printTicket().then((value) {
+                                                if(value == "OK"){
+                                                  context.read<GeneralNotifier>().bluetoothPrinterMacId = d.remoteId.toString();
+                                                  showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
+                                                }
+                                              });
+                                            });
                                             // setConnect(d.remoteId.toString()).then((value) {
-                                            //   printTicket().then((value) {
-                                            //     if(value == "OK"){
-                                            //       context.read<GeneralNotifier>().bluetoothPrinterMacId = d.remoteId.toString();
-                                            //       showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
-                                            //     }
-                                            //   });
+                                            //
+                                            //   Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:d.remoteId.toString() ,title: "Preview",)));
+                                            //
                                             // });
                                           });
                                         }, title: "Connect"
@@ -321,15 +335,21 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                             setState(() {
                               name = r.device.localName;
                             });
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:r.device.remoteId.toString() ,title: "Preview",)));
+                            setConnect(r.device.remoteId.toString()).then((value) {
+
+                              printTicket().then((value) {
+                                if(value == "OK"){
+                                  context.read<GeneralNotifier>().bluetoothPrinterMacId = r.device.remoteId.toString();
+                                  showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
+                                }
+                              });
+                            });
+
+
                             // setConnect(r.device.remoteId.toString()).then((value) {
                             //
-                            //   printTicket().then((value) {
-                            //     if(value == "OK"){
-                            //       context.read<GeneralNotifier>().bluetoothPrinterMacId = r.device.remoteId.toString();
-                            //       showAwesomeDialogue(title: "Success", content: "Your printer is ready to use", type: DialogType.SUCCES);
-                            //     }
-                            //   });
+                            //   Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:r.device.remoteId.toString() ,title: "Preview",)));
+                            //
                             // });
                           });
 
@@ -412,14 +432,14 @@ class PrintIII extends StatefulWidget {
 class _PrintIIIState extends State<PrintIII> {
   ScreenshotController screenshotController = ScreenshotController();
   String dir = Directory.current.path;
-  bool connected = false;
+  bool connected = true;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     print(dir);
     // this func to cheeck if port are close or not
-    setConnect(widget.mac);
+    // setConnect(widget.mac);
   }
 
   Future<void> setConnect(String mac) async {
@@ -436,16 +456,16 @@ class _PrintIIIState extends State<PrintIII> {
     List<int> bytes = [];
     CapabilityProfile profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm80, profile);
-    bytes += generator.text("Demo Shop",
+    bytes += generator.text("Demo Shop1",
         styles: PosStyles(
           align: PosAlign.center,
           height: PosTextSize.size3,
           width: PosTextSize.size3,
         ),
-        linesAfter: 1);
+      );
     final im.Image? image = im.decodeImage(theimageThatComesfr);
     // bytes += generator.image(image!);
-    generator.imageRaster(image!, imageFn: PosImageFn.graphics);
+    bytes += generator.imageRaster(image!,align: PosAlign.center);
     bytes += generator.cut();
     return bytes;
   }
@@ -503,137 +523,109 @@ class _PrintIIIState extends State<PrintIII> {
                   SizedBox(
                     height: 10,
                   ),
-                  Screenshot(
-                    controller: screenshotController,
-                    child: Container(
-                        width: 460,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "محمد نعم 臺灣  ",
-                                  style: TextStyle(
-                                      fontSize: 50, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                              mainAxisAlignment: MainAxisAlignment.center,
-                            ),
-                            Text(
-                                "----------------------------------------------------------------------------------"),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "(  汉字 )",
-                                    style: TextStyle(
-                                        fontSize: 40, fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "رقم الطلب",
-                                    style: TextStyle(
-                                        fontSize: 30, fontWeight: FontWeight.bold),
-                                  ),
-                                ],
+                  Center(
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: Container(
+                        color: ColorManager.white,
+                          width: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "محمد نعم",
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black),
                               ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                              child: Text(
-                                  "-------------------------------------------------------------------------------------"),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
+                              // Text(
+                              //     "----------------------------------------------------------------------------------"),
+                              Center(
+                                child: Text  (
+                                  "رقم الطلب",
+                                  style: TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black),
+                                ),
+                              ),
+                              // SizedBox(
+                              //   height: 20,
+                              //   child: Text(
+                              //       "-------------------------------------------------------------------------------------",style: TextStyle(color: ColorManager.black),),
+                              // ),
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
                                       "التفاصيل",
                                       style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,color: ColorManager.black),
                                     ),
-                                  ),
-                                  flex: 6,
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "السعر ",
+                                    Text(
+                                      "السعر",
                                       style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,color: ColorManager.black),
                                     ),
-                                  ),
-                                  flex: 2,
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
+                                    Text(
                                       "العدد",
                                       style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,color: ColorManager.black),
                                     ),
-                                  ),
-                                  flex: 2,
+                                  ],
                                 ),
-                              ],
-                            ),
-                            ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              physics: ScrollPhysics(),
-                              itemCount: 4,
-                              itemBuilder: (context, index) {
-                                return Card(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            "臺灣",
-                                            style: TextStyle(fontSize: 25),
-                                          ),
-                                        ),
-                                        flex: 6,
-                                      ),
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            "تجربة عيوني انتة ",
-                                            style: TextStyle(fontSize: 25),
-                                          ),
-                                        ),
-                                        flex: 2,
-                                      ),
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            "Test My little pice of huny",
-                                            style: TextStyle(fontSize: 25),
-                                          ),
-                                        ),
-                                        flex: 2,
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                            Text(
-                                "----------------------------------------------------------------------------------"),
-                          ],
-                        )),
+                              ),
+                              // ListView.builder(
+                              //   scrollDirection: Axis.vertical,
+                              //   shrinkWrap: true,
+                              //   physics: ScrollPhysics(),
+                              //   itemCount: 4,
+                              //   itemBuilder: (context, index) {
+                              //     return Card(
+                              //       child: Row(
+                              //         mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //         crossAxisAlignment: CrossAxisAlignment.start,
+                              //         children: [
+                              //           Expanded(
+                              //             child: Center(
+                              //               child: Text(
+                              //                 "臺灣",
+                              //                 style: TextStyle(fontSize: 25),
+                              //               ),
+                              //             ),
+                              //             flex: 6,
+                              //           ),
+                              //           Expanded(
+                              //             child: Center(
+                              //               child: Text(
+                              //                 "تجربة عيوني انتة ",
+                              //                 style: TextStyle(fontSize: 25),
+                              //               ),
+                              //             ),
+                              //             flex: 2,
+                              //           ),
+                              //           Expanded(
+                              //             child: Center(
+                              //               child: Text(
+                              //                 "Test My little pice of huny",
+                              //                 style: TextStyle(fontSize: 25),
+                              //               ),
+                              //             ),
+                              //             flex: 2,
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
+                              Text(
+                                  "----------------------------------------------------------------------------------"),
+                            ],
+                          )),
+                    ),
                   ),
                   SizedBox(
                     height: 25,

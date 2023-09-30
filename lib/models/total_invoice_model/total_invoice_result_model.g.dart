@@ -9,6 +9,10 @@ part of 'total_invoice_result_model.dart';
 TotalInvoiceResultModel _$TotalInvoiceResultModelFromJson(
         Map<String, dynamic> json) =>
     TotalInvoiceResultModel(
+      customerData: json['customer_data'] == null
+          ? null
+          : CustomerResultModel.fromJson(
+              json['customer_data'] as Map<String, dynamic>),
       id: json['id'] as int?,
       userId: json['user_id'] as int?,
       soldToId: json['sold_to_id'] as int?,
@@ -59,5 +63,6 @@ Map<String, dynamic> _$TotalInvoiceResultModelToJson(
       'reference_number': instance.referenceNumber,
       'prepared_by': instance.preparedBy,
       'approved_by': instance.approvedBy,
+      'customer_data': instance.customerData?.toJson(),
       'items': instance.items?.map((e) => e.toJson()).toList(),
     };

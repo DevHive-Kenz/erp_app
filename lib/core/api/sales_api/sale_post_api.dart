@@ -26,23 +26,7 @@ class SalePostApi {
   }) async {
     const String subUrl = "/api/sales/";
     String uri = AppAPI.baseUrl + subUrl;
-    log("AAWS ${{
-      "user": user,
-      "sold_to": soldTo,
-      "print_type": printType,
-      "invoice_id": invoiceID,
-      "payment_type": paymentType,
-      "amount": amount,
-      "total_tax": totalTax,
-      "date": date,
-      "quotation_id": quotationID,
-      // "supply_date": supplyDate,
-      "contract_number": contractNumber,
-      // "due_date": dueDate,
-      "invoice_period": invoicePeriod,
-      "reference_number": referenceNumber,
-      "items": items
-    }.toString() }");
+
     final bodyData = json.encode({
       "user": user,
       "sold_to": soldTo,

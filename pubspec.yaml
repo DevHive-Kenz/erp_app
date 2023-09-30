@@ -66,6 +66,7 @@ dependencies:
   permission_handler: ^10.2.0
   image: ^3.0.2
   screenshot: ^2.1.0
+  package_info_plus: ^4.0.1
 
 dev_dependencies:
   flutter_test:

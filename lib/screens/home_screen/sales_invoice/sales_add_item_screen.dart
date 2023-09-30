@@ -41,6 +41,7 @@ class SalesAddScreen extends HookWidget {
     final rateController = useTextEditingController();
     final priceListController = useTextEditingController();
     ScrollController scrollController = ScrollController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
 
     final qtyFocus = useFocusNode();
     final discountPercentController = useTextEditingController(text: "0.00");
@@ -521,117 +522,120 @@ class SalesAddScreen extends HookWidget {
                           ),
                         ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Enter Product Details",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
-                          kSizedBox20,
-                          TextFormFieldCustom(
-                            controller: itemNameController,
-                            hintName: "Select Item *",
-                            isReadOnly: true,
-                            onTap: (){
-                              productDetailFun();
-                            },
-                          ),
-                          kSizedBox15,
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormFieldCustom(
-                                  controller: priceListController,
-                                  hintName: "Select Price List *",
-                                  isReadOnly: true,
-                                  onTap: (){
-                                    selectPriceListFun();
-                                  },
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Enter Product Details",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
+                            kSizedBox20,
+                            TextFormFieldCustom(
+                              controller: itemNameController,
+                              hintName: "Select Item *",
+                              isReadOnly: true,
+                              onTap: (){
+                                productDetailFun();
+                              },
+                            ),
+                            kSizedBox15,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormFieldCustom(
+                                    controller: priceListController,
+                                    hintName: "Select Price List *",
+                                    isReadOnly: true,
+                                    onTap: (){
+                                      selectPriceListFun();
+                                    },
+                                  ),
                                 ),
-                              ),
-                              kSizedW10,
-                              Expanded(
-                                child: TextFormFieldCustom(
-                                  controller: unitController,
-                                  hintName: "Select Unit *",
+                                kSizedW10,
+                                Expanded(
+                                  child: TextFormFieldCustom(
+                                    controller: unitController,
+                                    hintName: "Select Unit *",
 
-                                  isReadOnly: true,
-                                  onTap: (){
-                                    selectUnitFunc();
-                                  },
+                                    isReadOnly: true,
+                                    onTap: (){
+                                      selectUnitFunc();
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          kSizedBox15,
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormFieldCustom(
-                                  controller: qtyController,
-                                  inputType: TextInputType.number,
-                                  hintName: "Quantity *",
-                                  focus: qtyFocus,
-                                  onChanged: (value){
-                                    if(value.isNotEmpty){
-                                      double val = double.parse(value);
-                                      if(val>0 && rateController.text.isNotEmpty){
-                                        subtotal.value = val * double.parse(rateController.text);
+                              ],
+                            ),
+                            kSizedBox15,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormFieldCustom(
+                                    controller: qtyController,
+                                    inputType: TextInputType.number,
+                                    hintName: "Quantity *",
+                                    focus: qtyFocus,
+                                    onChanged: (value){
+                                      if(value.isNotEmpty){
+                                        double val = double.parse(value);
+                                        if(val>0 && rateController.text.isNotEmpty){
+                                          subtotal.value = val * double.parse(rateController.text);
+                                          disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                          vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+                                        }else{
+                                          showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
+                                          qtyController.clear();
+                                        }
+                                      }
+
+                                    },
+                                  ),
+                                ),
+                                kSizedW10,
+                                Expanded(
+                                  child: TextFormFieldCustom(
+                                    controller: rateController,
+                                    inputType: TextInputType.number,
+                                    hintName: "Rate ",
+                                    validator:  (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter rate';
+                                      }
+                                   //    else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00")){
+                                   //      // showAwesomeDialogue(title: "Warning", content: 'Please enter a price below \n ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}', type: DialogType.WARNING);
+                                   //
+                                   //      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00"}';
+                                   //    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00")){
+                                   // // showAwesomeDialogue(title: "Warning", content: 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}', type: DialogType.WARNING);
+                                   //    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00"}';
+                                   //    }
+                                      return null;
+                                    },
+                                    onChanged: (value){
+                                      if(value.isNotEmpty){
+                                        double val = double.parse(value);
+                                        subtotal.value = val * double.parse(qtyController.text);
                                         disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
                                         vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
-                                      }else{
-                                        showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
-                                        qtyController.clear();
+
+                                        // if(val>0 && qtyController.text.isNotEmpty){
+                                        //   subtotal.value = val * double.parse(qtyController.text);
+                                        //   disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
+                                        //   vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
+                                        //
+                                        // }else{
+                                        //   showAwesomeDialogue(title: "INFO", content: "Rate & Quantity should be larger than zero", type: DialogType.INFO);
+                                        //   qtyController.clear();
+                                        // }
                                       }
-                                    }
 
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                              kSizedW10,
-                              Expanded(
-                                child: TextFormFieldCustom(
-                                  controller: rateController,
-                                  inputType: TextInputType.number,
-                                  hintName: "Rate ",
-                                  validator:  (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter rate';
-                                    }
-                                 //    else if (double.parse(value) > double.parse(currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00")){
-                                 //      // showAwesomeDialogue(title: "Warning", content: 'Please enter a price below \n ${currentNotifier.getSelectedPriceFromConv?.maxLimitPrice ?? "0.00"}', type: DialogType.WARNING);
-                                 //
-                                 //      return 'Please enter a price below ${currentNotifier.getSelectedPriceFromConvItems?.maxLimitPrice ?? "0.00"}';
-                                 //    }else if(double.parse(value) < double.parse(currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00")){
-                                 // // showAwesomeDialogue(title: "Warning", content: 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConv?.lowLimitPrice ?? "0.00"}', type: DialogType.WARNING);
-                                 //    return 'Please enter a price above \n ${currentNotifier.getSelectedPriceFromConvItems?.lowLimitPrice ?? "0.00"}';
-                                 //    }
-                                    return null;
-                                  },
-                                  onChanged: (value){
-                                    if(value.isNotEmpty){
-                                      double val = double.parse(value);
-                                      subtotal.value = val * double.parse(qtyController.text);
-                                      disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
-                                      vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
 
-                                      // if(val>0 && qtyController.text.isNotEmpty){
-                                      //   subtotal.value = val * double.parse(qtyController.text);
-                                      //   disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
-                                      //   vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
-                                      //
-                                      // }else{
-                                      //   showAwesomeDialogue(title: "INFO", content: "Rate & Quantity should be larger than zero", type: DialogType.INFO);
-                                      //   qtyController.clear();
-                                      // }
-                                    }
+                              ],
+                            ),
 
-                                  },
-                                ),
-                              ),
-
-                            ],
-                          ),
-
-                        ],
+                          ],
+                        ),
                       ),
                   ),
                 ),
@@ -784,99 +788,105 @@ class SalesAddScreen extends HookWidget {
                           children: [
                             Center(
                               child: CustomButton(onTap: (){
-                                if(editIndex !=null){
-                                  currentNotifier.updateProductList({
-                                    "item": itemNameController.text,
-                                    "quantity": double.parse(qtyController.text),
-                                    "unit":unitController.text,
-                                    "price": double.parse(rateController.text),
-                                    "tax":currentNotifier.getVatPercent,
-                                    "tax_amount":vatTotal.value,
-                                    "discount": double.parse(discountPercentController.text),
-                                    "discount_amount": disTotal.value,
-                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
-                                    "subTotal":subtotal.value,
-                                    "priceList":priceListController.text,
-                                    "discountFixed":discountFixedController.text,
-                                    "priceListModel":currentNotifier.getSelectedPriceList,
-                                    "productModel":currentNotifier.getSelectedProduct,
-                                    "conversionModel":currentNotifier.getSelectedConversion,
-                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
-                                  }, editIndex);
-                                }else {
-                                  currentNotifier.setProductList = {
-                                    "item": itemNameController.text,
-                                    "quantity": double.parse(qtyController.text),
-                                    "unit":unitController.text,
-                                    "price": double.parse(rateController.text),
-                                    "tax":currentNotifier.getVatPercent,
-                                    "tax_amount":vatTotal.value,
-                                    "discount": double.parse(discountPercentController.text),
-                                    "discount_amount": disTotal.value,
-                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
-                                    "subTotal":subtotal.value,
-                                    "priceList":priceListController.text,
-                                    "discountFixed":discountFixedController.text,
-                                    "priceListModel":currentNotifier.getSelectedPriceList,
-                                    "productModel":currentNotifier.getSelectedProduct,
-                                    "conversionModel":currentNotifier.getSelectedConversion,
-                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
-                                  };
+                                if(formKey.currentState?.validate() ??false ){
+                                  if(editIndex !=null){
+                                    currentNotifier.updateProductList({
+                                      "item": itemNameController.text,
+                                      "quantity": double.parse(qtyController.text),
+                                      "unit":unitController.text,
+                                      "price": double.parse(rateController.text),
+                                      "tax":currentNotifier.getVatPercent,
+                                      "tax_amount":vatTotal.value,
+                                      "discount": double.parse(discountPercentController.text),
+                                      "discount_amount": disTotal.value,
+                                      "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                      "subTotal":subtotal.value,
+                                      "priceList":priceListController.text,
+                                      "discountFixed":discountFixedController.text,
+                                      "priceListModel":currentNotifier.getSelectedPriceList,
+                                      "productModel":currentNotifier.getSelectedProduct,
+                                      "conversionModel":currentNotifier.getSelectedConversion,
+                                      "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                    }, editIndex);
+                                  }else {
+                                    currentNotifier.setProductList = {
+                                      "item": itemNameController.text,
+                                      "quantity": double.parse(qtyController.text),
+                                      "unit":unitController.text,
+                                      "price": double.parse(rateController.text),
+                                      "tax":currentNotifier.getVatPercent,
+                                      "tax_amount":vatTotal.value,
+                                      "discount": double.parse(discountPercentController.text),
+                                      "discount_amount": disTotal.value,
+                                      "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                      "subTotal":subtotal.value,
+                                      "priceList":priceListController.text,
+                                      "discountFixed":discountFixedController.text,
+                                      "priceListModel":currentNotifier.getSelectedPriceList,
+                                      "productModel":currentNotifier.getSelectedProduct,
+                                      "conversionModel":currentNotifier.getSelectedConversion,
+                                      "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                    };
+                                  }
+
+                                  clearVariables();
+                                  currentNotifier.clearVariables();
+                                  currentNotifier.calculate();
+
+                                  Navigator.pop(context);
                                 }
 
-                                clearVariables();
-                                currentNotifier.clearVariables();
-                                currentNotifier.calculate();
-
-                                Navigator.pop(context);
                               }, title: "Save & Exit",width: 100.w,height: 60.h,),
                             ),
                             Center(
                               child: CustomButton(onTap: (){
-                                if(editIndex !=null){
-                                  currentNotifier.updateProductList({
-                                    "item": itemNameController.text,
-                                    "quantity": double.parse(qtyController.text),
-                                    "unit":unitController.text,
-                                    "price": double.parse(rateController.text),
-                                    "tax":currentNotifier.getVatPercent,
-                                    "tax_amount":vatTotal.value,
-                                    "discount": double.parse(discountPercentController.text),
-                                    "discount_amount": disTotal.value,
-                                    "total_amount": subtotal.value + vatTotal.value - disTotal.value,
-                                    "subTotal":subtotal.value,
-                                    "priceList":priceListController.text,
-                                    "discountFixed":discountFixedController.text,
-                                    "priceListModel":currentNotifier.getSelectedPriceList,
-                                    "productModel":currentNotifier.getSelectedProduct,
-                                    "conversionModel":currentNotifier.getSelectedConversion,
-                                    "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
-                                  }, editIndex);
-                                }else {
-                                  currentNotifier.setProductList = {
-                                  "item": itemNameController.text,
-                                  "quantity": double.parse(qtyController.text).toStringAsFixed(2),
-                                  "unit":unitController.text,
-                                  "price": double.parse(rateController.text).toStringAsFixed(2),
-                                  "tax":currentNotifier.getVatPercent,
-                                  "tax_amount":vatTotal.value.toStringAsFixed(2),
-                                  "discount": double.parse(discountPercentController.text).toStringAsFixed(2),
-                                  "discount_amount": disTotal.value.toStringAsFixed(2),
-                                  "total_amount": (subtotal.value + vatTotal.value - disTotal.value).toStringAsFixed(2),
-                                  "subTotal":subtotal.value,
-                                  "priceList":priceListController.text,
-                                  "discountFixed":discountFixedController.text,
-                                  "priceListModel":currentNotifier.getSelectedPriceList,
-                                  "productModel":currentNotifier.getSelectedProduct,
-                                  "conversionModel":currentNotifier.getSelectedConversion,
-                                  "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
-                                };
+                                if(formKey.currentState?.validate() ??false ){
+                                  if(editIndex !=null){
+                                    currentNotifier.updateProductList({
+                                      "item": itemNameController.text,
+                                      "quantity": double.parse(qtyController.text),
+                                      "unit":unitController.text,
+                                      "price": double.parse(rateController.text),
+                                      "tax":currentNotifier.getVatPercent,
+                                      "tax_amount":vatTotal.value,
+                                      "discount": double.parse(discountPercentController.text),
+                                      "discount_amount": disTotal.value,
+                                      "total_amount": subtotal.value + vatTotal.value - disTotal.value,
+                                      "subTotal":subtotal.value,
+                                      "priceList":priceListController.text,
+                                      "discountFixed":discountFixedController.text,
+                                      "priceListModel":currentNotifier.getSelectedPriceList,
+                                      "productModel":currentNotifier.getSelectedProduct,
+                                      "conversionModel":currentNotifier.getSelectedConversion,
+                                      "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                    }, editIndex);
+                                  }else {
+                                    currentNotifier.setProductList = {
+                                      "item": itemNameController.text,
+                                      "quantity": double.parse(qtyController.text),
+                                      "unit":unitController.text,
+                                      "price": double.parse(rateController.text),
+                                      "tax":currentNotifier.getVatPercent,
+                                      "tax_amount":vatTotal.value,
+                                      "discount": double.parse(discountPercentController.text),
+                                      "discount_amount": disTotal.value,
+                                      "total_amount": (subtotal.value + vatTotal.value - disTotal.value),
+                                      "subTotal":subtotal.value,
+                                      "priceList":priceListController.text,
+                                      "discountFixed":discountFixedController.text,
+                                      "priceListModel":currentNotifier.getSelectedPriceList,
+                                      "productModel":currentNotifier.getSelectedProduct,
+                                      "conversionModel":currentNotifier.getSelectedConversion,
+                                      "fromConversionItemModel":currentNotifier.getSelectedPriceFromConvItems,
+                                    };
+                                  }
+
+                                  clearVariables();
+                                  currentNotifier.clearVariables();
+                                  currentNotifier.calculate();
+                                  productDetailFun();
                                 }
 
-                                clearVariables();
-                                currentNotifier.clearVariables();
-                                currentNotifier.calculate();
-                                productDetailFun();
 
                               }, title: "Save & Add",width: 100.w,height: 60.h,),
                             ),

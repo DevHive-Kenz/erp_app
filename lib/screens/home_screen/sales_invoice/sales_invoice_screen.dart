@@ -40,6 +40,7 @@ class SalesScreen extends HookWidget {
     final searchCustomer = Provider.of<SearchProvider>(context);
     final customerNotifier = context.read<CustomerNotifier>();
     final seriesFetchNotifier = context.read<SeriesFetchNotifier>();
+    final currentNotifier = context.read<CurrentSaleNotifier>();
     final profileNotifier = context.read<ProfileNotifier>();
     final DateTime nowDate = DateTime.now();
     final formKey = useMemoized(() => GlobalKey<FormState>());
@@ -76,16 +77,7 @@ class SalesScreen extends HookWidget {
       }
     }
 
-    String formatString(String input) {
-      // Check if the input string is shorter than 4 characters
-      if (input.length < 4) {
-        // Pad the input string with leading zeros to make it 4 characters long
-        return input.padLeft(4, '0');
-      } else {
-        // If the input is 4 characters or longer, return it as is
-        return input;
-      }
-    }
+
     useEffect(() {
       Future.microtask(() {
             searchCustomer.initializeCustomerList(
@@ -136,7 +128,7 @@ class SalesScreen extends HookWidget {
                          children: [
                            Text("Invoice No",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
                            kSizedBox8,
-                           Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",style: getSemiBoldStyle(color: ColorManager.black,),)
+                           Text(currentNotifier.getDisplayInvoiceID ?? "",style: getSemiBoldStyle(color: ColorManager.black,),)
                          ],
                          ),
       Column(
@@ -305,16 +297,18 @@ class SalesScreen extends HookWidget {
                         Center(
                           child: CustomButton(onTap: (){
                             if(formKey.currentState?.validate() ?? false) {
-                              context.read<CurrentSaleNotifier>().setSalesFirstData(
+                              currentNotifier.clearAll();
+
+                              currentNotifier.setSalesFirstData(
                                 user: profileNotifier.getProfile?.result?[0].userId ?? 0,
                                 date: invoiceTimeStamp.value,
                                 invoiceId: int.parse(seriesFetchNotifier.getSeriesFetch ?? "0"),
-                                displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(seriesFetchNotifier.getSeriesFetch ?? "0")}",
+                                displayInvoiceId: currentNotifier.getDisplayInvoiceID ?? "",
                                 printType: "thermal",
                                 soldTo: selectedCustomerID.value, soldToName: customerController.text.split(" ").first,
                                 poNumber: poNumberController.text,
-                                poDate: poDateController.text, dataCustomer: selectedCustomer.value!,
-
+                                poDate: poDateController.text,
+                                dataCustomer: selectedCustomer.value!,
                               );
 
                               Navigator.pushNamed(context, salesItemAdding);

@@ -12,6 +12,7 @@ import '../../../models/sales_return_model/sales_return_model.dart';
 import '../../../provider/current_sale_notifier.dart';
 import '../../api/sales_api/sales_return_api.dart';
 import '../../service/shared_preferance_service.dart';
+import '../profile_notifier/profile_notifier.dart';
 
 
 
@@ -27,6 +28,16 @@ class SeriesFetchNotifier extends ChangeNotifier {
   int? get getStatusCode => _statusCode;
   String? get getSeriesFetch => _seriesFetch;
 
+  String formatString(String input) {
+    // Check if the input string is shorter than 4 characters
+    if (input.length < 4) {
+      // Pad the input string with leading zeros to make it 4 characters long
+      return input.padLeft(4, '0');
+    } else {
+      // If the input is 4 characters or longer, return it as is
+      return input;
+    }
+  }
 
 
   Future<String?> seriesFetch({
@@ -38,13 +49,14 @@ class SeriesFetchNotifier extends ChangeNotifier {
       notifyListeners();
       // final generalNotifier = context.read<GeneralNotifier>();
       final currentNotifier = context.read<CurrentSaleNotifier>();
+      final profileNotifier = context.read<ProfileNotifier>();
+
       final listData = await _seriesFetchAPI.seriesFetch(type: type);
 
       if(listData["status"] == 200){
         _seriesFetch= listData["result"].toString();
-        currentNotifier.clearAll();
+        currentNotifier.setInvoiceID(invoiceId: listData["result"],displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(listData["result"].toString())}");
         _isLoading = false;
-
         notifyListeners();
         return "OK";
       }else{

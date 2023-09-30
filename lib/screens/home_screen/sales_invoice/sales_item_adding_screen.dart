@@ -28,6 +28,7 @@ class SalesItemAddingScreen extends HookWidget {
     final isLoading = useState<bool>(false);
 
     final currentSaleNotifier = context.read<CurrentSaleNotifier>();
+    final salesPostNotifier = context.read<SalesPostNotifier>();
 
     final isReceived = useState<bool>(false);
      useEffect(() {
@@ -398,12 +399,7 @@ class SalesItemAddingScreen extends HookWidget {
                                   btnOkText: "yes",
                                   btnOkOnPress: () async {
                                     isLoading.value =true;
-                                   await context.read<SalesPostNotifier>().salesPost(context: context).then((value) async {
-                                     if(value == "OK"){
-                                       Navigator.pushNamed(context, homeRoute);
-                                       await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context);
-                                     }
-                                    });
+                                   await salesPostNotifier.salesPost(context: context);
                                     isLoading.value =false;
                                   },
                                   btnOkColor: ColorManager.primaryLight)

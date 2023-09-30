@@ -8,6 +8,7 @@ import '../models/product_model/product_items_model.dart';
 import '../models/product_model/product_model.dart';
 import '../models/product_model/product_result_model.dart';
 import '../models/product_model/product_unit_conversion_model.dart';
+import '../models/total_invoice_model/total_invoice_items_model.dart';
 
 class CurrentSaleNotifier extends ChangeNotifier{
 
@@ -80,6 +81,13 @@ class CurrentSaleNotifier extends ChangeNotifier{
         notifyListeners();
   }
 
+  void setInvoiceID({required int invoiceId, required String displayInvoiceId}){
+    _displayInvoiceId = displayInvoiceId;
+    _invoiceId = invoiceId;
+    print("dddddddd $_displayInvoiceId");
+    print("dddddddd $_invoiceId");
+notifyListeners();
+  }
 
 
   void clearAll(){
@@ -91,13 +99,13 @@ class CurrentSaleNotifier extends ChangeNotifier{
     _totalAmount=0.00;
     _user=null;
     _soldTo=null;
-    _invoiceId=null;
+    // _invoiceId=null;
     _printType=null;
     _soldToName=null;
     _poDate=null;
     _poNumber=null;
     _date=null;
-    _displayInvoiceId=null;
+    // _displayInvoiceId=null;
     _selectedPriceFromConvItems=null;
     _selectedConversion=null;
     _selectedPriceList=null;
@@ -185,6 +193,25 @@ class CurrentSaleNotifier extends ChangeNotifier{
 
   set setProductList (Map<String,dynamic> data){
     _items.add(data);
+    notifyListeners();
+  }
+
+  set setRecentProductList (List<TotalInvoiceItemsModel> data){
+    data.forEach((element) {
+      _items.add({
+        "item": element.item ?? "",
+        "quantity": element.quantity,
+        "unit":element.unit,
+        "price": element.price,
+        "tax":element.tax,
+        "tax_amount":element.taxAmount,
+        "discount": element.discount,
+        "discount_amount": element.discountAmount,
+        "total_amount": element.totalAmount,
+      });
+      notifyListeners();
+
+    });
     notifyListeners();
   }
 

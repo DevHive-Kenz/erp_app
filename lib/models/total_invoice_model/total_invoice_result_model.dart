@@ -1,7 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:kenz_app/models/sales_return_model/sales_return_result_model.dart';
+import 'package:kenz_app/models/total_invoice_model/total_invoice_customer_data_model.dart';
 import 'package:kenz_app/models/total_invoice_model/total_invoice_items_model.dart';
+
+import '../customer_model/customer_result_model.dart';
 
 
 part 'total_invoice_result_model.g.dart';
@@ -28,9 +31,10 @@ class TotalInvoiceResultModel {
   @JsonKey(name: "reference_number")final String? referenceNumber;
   @JsonKey(name: "prepared_by")final String? preparedBy;
   @JsonKey(name: "approved_by")final String? approvedBy;
+  @JsonKey(name: "customer_data")final CustomerResultModel? customerData;
   final List<TotalInvoiceItemsModel>? items;
   TotalInvoiceResultModel(
-      {this.id, this.userId, this.soldToId, this.branchID, this.printType, this.imageFile, this.documentFile, this.invoiceId, this.paymentType, this.amount, this.totalTax, this.date, this.quotationId, this.supplyDate, this.contractNumber, this.dueDate, this.invoicePeriod, this.referenceNumber, this.preparedBy, this.approvedBy, this.items,} );
+      {this.customerData, this.id, this.userId, this.soldToId, this.branchID, this.printType, this.imageFile, this.documentFile, this.invoiceId, this.paymentType, this.amount, this.totalTax, this.date, this.quotationId, this.supplyDate, this.contractNumber, this.dueDate, this.invoicePeriod, this.referenceNumber, this.preparedBy, this.approvedBy, this.items,} );
 
 
   factory TotalInvoiceResultModel.fromJson(Map<String, dynamic> json) =>
