@@ -51,6 +51,8 @@ class CustomerNotifier extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch(error){
+      print(error);
+
       showAwesomeDialogue(title: "Warning", content: "Please try again later", type: DialogType.WARNING,);
       _isLoading = false;
       notifyListeners();

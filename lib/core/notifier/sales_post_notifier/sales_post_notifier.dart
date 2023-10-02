@@ -45,7 +45,7 @@ Future<void> successFunc(BuildContext context) async {
       currentNotifier.calculate();
       final listData = await _salesPostApi.salePostApi(
           user: profileNotifier.getProfile?.result?[0].userId ?? 0,
-          soldTo:currentNotifier.getSelectedCustomer?.id ?? 0,
+          soldTo:currentNotifier.getSelectedCustomer?.customerID ?? 0,
           printType: currentNotifier.getPrintType ?? "",
           invoiceID: currentNotifier.getInvoiceID ?? 0,
           paymentType: currentNotifier.getPaymentMethod ?? "",

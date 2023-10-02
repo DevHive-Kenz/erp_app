@@ -54,23 +54,23 @@ class SalesAddScreen extends HookWidget {
 
     void preFillData(){
       if(editIndex != null){
-        // itemNameController.text = currentNotifier.getItemList[editIndex!]["item"];
-        // qtyController.text = currentNotifier.getItemList[editIndex!]["quantity"].toString();
-        // unitController.text = currentNotifier.getItemList[editIndex!]["unit"].toString();
-        // rateController.text = currentNotifier.getItemList[editIndex!]["price"].toString();
-        // priceListController.text =currentNotifier.getItemList[editIndex!]["priceList"].toString();
-        // discountPercentController.text =currentNotifier.getItemList[editIndex!]["discount"].toString();
-        // discountFixedController.text = currentNotifier.getItemList[editIndex!]["discountFixed"].toString();
-        // taxPercentController.text = "${currentNotifier.getItemList[editIndex!]["tax"]}% VAT";
-        // subtotal.value = currentNotifier.getItemList[editIndex!]["subTotal"];
-        // vatTotal.value = currentNotifier.getItemList[editIndex!]["tax_amount"];
-        // disTotal.value = currentNotifier.getItemList[editIndex!]["discount_amount"];
-        // ///notifier setting
-        // currentNotifier.setVatPercent = currentNotifier.getItemList[editIndex!]["tax"].toString();
-        // currentNotifier.setProduct = currentNotifier.getItemList[editIndex!]["productModel"];
-        // currentNotifier.setPriceList = currentNotifier.getItemList[editIndex!]["priceListModel"];
-        // currentNotifier.setConversion = currentNotifier.getItemList[editIndex!]["conversionModel"];
-        // currentNotifier.setPriceFromConversion = currentNotifier.getItemList[editIndex!]["fromConversionItemModel"];
+        itemNameController.text = currentNotifier.getItemList[editIndex!]["item"];
+        qtyController.text = currentNotifier.getItemList[editIndex!]["quantity"].toString();
+        unitController.text = currentNotifier.getItemList[editIndex!]["unit"].toString();
+        rateController.text = currentNotifier.getItemList[editIndex!]["price"].toString();
+        priceListController.text =currentNotifier.getItemList[editIndex!]["priceList"].toString();
+        discountPercentController.text =currentNotifier.getItemList[editIndex!]["discount"].toString();
+        discountFixedController.text = currentNotifier.getItemList[editIndex!]["discountFixed"].toString();
+        taxPercentController.text = "${currentNotifier.getItemList[editIndex!]["tax"]}% VAT";
+        subtotal.value = currentNotifier.getItemList[editIndex!]["subTotal"];
+        vatTotal.value = currentNotifier.getItemList[editIndex!]["tax_amount"];
+        disTotal.value = currentNotifier.getItemList[editIndex!]["discount_amount"];
+        ///notifier setting
+        currentNotifier.setVatPercent = currentNotifier.getItemList[editIndex!]["tax"].toString();
+        currentNotifier.setProduct = currentNotifier.getItemList[editIndex!]["productModel"];
+        currentNotifier.setPriceList = currentNotifier.getItemList[editIndex!]["priceListModel"];
+        currentNotifier.setConversion = currentNotifier.getItemList[editIndex!]["conversionModel"];
+        currentNotifier.setPriceFromConversion = currentNotifier.getItemList[editIndex!]["fromConversionItemModel"];
 
       }
     }
@@ -164,7 +164,9 @@ class SalesAddScreen extends HookWidget {
                                                   disTotal.value = 0.00;
                                                   vatTotal.value = 0.00;
                                                   data.items?.forEach((element) {
-                                                    if(element.id.toString() == currentNotifier.getSelectedPriceList?.id){
+
+                                                    if(element.id == currentNotifier.getSelectedPriceList?.id){
+
                                                       currentNotifier.setPriceFromConversion = element;
                                                     }
                                                   });

@@ -19,6 +19,7 @@ import '../../../provider/current_sale_notifier.dart';
 import '../../../provider/search_notifier.dart';
 import '../../widget/appbar_main_widget.dart';
 import '../../widget/text_field_widget.dart';
+import '../customer_create_screen/customer_create_screen.dart';
 
 
 
@@ -168,7 +169,17 @@ class SalesScreen extends HookWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Customer Selection",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Customer Selection",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
+                            InkWell(
+                                onTap: (){
+                                  Navigator.pushNamed(context, customerCreateScreen);
+                                },
+                                child: Text("ADD 🧔🏻‍",style: getBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s16),))
+                          ],
+                        ),
                         kSizedBox20,
                         TextFormFieldCustom(
                           controller: customerController,
@@ -243,16 +254,27 @@ class SalesScreen extends HookWidget {
                                                                       onTap: () {
                                                                         FocusManager.instance.primaryFocus?.unfocus();
                                                                         customerController.text = "${data.name.toString()}\n${data.nameArabic.toString()}";
-                                                                        selectedCustomerID.value = data.id;
+                                                                        selectedCustomerID.value = data.customerID;
                                                                         selectedCustomer.value = data;
                                                                         searchCustomer.changeSearchString("");
                                                                         Navigator.pop(context);
                                                                       },
                                                                       child: Container(
                                                                         padding: const EdgeInsets.symmetric(vertical: AppPadding.p8, horizontal: AppPadding.p8),
-                                                                        child:  Text(
-                                                                          "${data.name.toString()}\n${data.nameArabic.toString()}",
-                                                                          style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                                        child:  Row(
+                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Text(
+                                                                              "${data.name.toString()}\n${data.nameArabic.toString()}",
+                                                                              style: getRegularStyle(color: ColorManager.black, fontSize: FontSize.s14),
+                                                                            ),
+                                                                            InkWell(
+                                                                              onTap: (){
+                                                                                currentNotifier.setCustomerData(dataCustomer: data);
+                                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerCRUDScreen(isEditable: true,)));
+                                                                              },
+                                                                              child: Icon(Icons.edit_rounded,color: ColorManager.grey4,size: FontSize.s30,),)
+                                                                          ],
                                                                         ),
                                                                       ),
                                                                     );

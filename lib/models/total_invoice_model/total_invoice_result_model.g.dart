@@ -26,7 +26,7 @@ TotalInvoiceResultModel _$TotalInvoiceResultModelFromJson(
       totalTax: json['total_tax'] as num?,
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      quotationId: json['quotation_id'] as String?,
+      quotationId: json['quotation_id'] as int?,
       supplyDate: json['supply_date'] as String?,
       contractNumber: json['contract_number'] as String?,
       dueDate: json['due_date'] as String?,

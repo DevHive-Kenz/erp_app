@@ -1,5 +1,6 @@
 
 import 'package:kenz_app/screens/home_screen/home_screen.dart';
+import '../screens/home_screen/customer_create_screen/customer_create_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_add_item_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_invoice_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_item_adding_screen.dart';
@@ -23,6 +24,7 @@ const String salesAddScreen = "/salesAddScreen";
 const String printerSettingsScreen = "/printerSettingsScreen";
 const String bluetoothPrinterScreen = "/bluetoothPrinterScreen";
 const String totalInvoice = "/totalInvoice";
+const String customerCreateScreen = "/customerCreateScreen";
 
 
 
@@ -40,5 +42,6 @@ final routes = {
   printerSettingsScreen: (context) =>  const PrinterSettingsScreen(),
   bluetoothPrinterScreen: (context) =>  const BluetoothPrinterScreen(),
   totalInvoice: (context) =>  const TotalInvoice(),
+  customerCreateScreen: (context) =>  const CustomerCRUDScreen(),
 
 };

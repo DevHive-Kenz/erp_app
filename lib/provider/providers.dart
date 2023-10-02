@@ -5,6 +5,10 @@ import 'package:provider/single_child_widget.dart';
 
 import '../core/notifier/auth/auth_notifier.dart';
 
+import '../core/notifier/customer_crud_notifier/customer_create_notifier.dart';
+import '../core/notifier/customer_crud_notifier/customer_delete_notifier.dart';
+import '../core/notifier/customer_crud_notifier/customer_edit_notifier.dart';
+import '../core/notifier/master_data_notifier/master_data_notifier.dart';
 import '../core/notifier/product_notifier/product_notifier.dart';
 import '../core/notifier/customer_notifier/customer_notifier.dart';
 import '../core/notifier/profile_notifier/profile_notifier.dart';
@@ -31,6 +35,10 @@ List<SingleChildWidget> providersList = [
 
   ///customer
   ChangeNotifierProvider(create: (_) => ProductNotifier()),
+  ChangeNotifierProvider(create: (_) => CustomerCreateNotifier()),
+  ChangeNotifierProvider(create: (_) => CustomerEditNotifier()),
+  ChangeNotifierProvider(create: (_) => CustomerDeleteNotifier()),
+  ChangeNotifierProvider(create: (_) => MasterDataCustomerNotifier()),
 
   ///sales
   ChangeNotifierProvider(create: (_) => SalesReturnNotifier()),

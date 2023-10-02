@@ -14,6 +14,10 @@ import 'package:provider/provider.dart';
 import '../../../constants/values_manger.dart';
 import '../../constants/app_routes.dart';
 import '../widget/Circular_progress_indicator_widget.dart';
+import '../../core/notifier/product_notifier/product_notifier.dart';
+import '../../core/notifier/customer_notifier/customer_notifier.dart';
+import '../../core/notifier/profile_notifier/profile_notifier.dart';
+import '../../core/notifier/master_data_notifier/master_data_notifier.dart';
 
 class HomeScreen extends HookWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -30,6 +34,18 @@ class HomeScreen extends HookWidget {
 
       return null;
     },[]);
+
+    Future<void> callApiRefresh() async {
+      await Future.wait([
+        context.read<GeneralNotifier>().checkAxisCount(context: context),
+        context.read<GeneralNotifier>().getUserNameFun(),
+        context.read<ProductNotifier>().product(context: context),
+        context.read<ProfileNotifier>().profile(context: context),
+        context.read<CustomerNotifier>().customer(context: context),
+        context.read<MasterDataCustomerNotifier>().masterData(context: context),
+
+      ]);
+    }
 
     print(screenWidth);
     return Scaffold(
@@ -60,40 +76,45 @@ class HomeScreen extends HookWidget {
                           ),
                           kSizedBox20,
                           Expanded(
-                            child: GridView.count(
-                              crossAxisCount: generalNotifier.getAxisCount,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              children: List.generate(3, (index) {
-                                String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":"Add";
-                                return SquareTileWidget(
-                                  icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:Icons.add,
-                                  index: index,
-                                  onTap: () async {
-                                    print(index);
-                                    if(index==0){
-                                      isLoading.value = true;
-                                      await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE");
-                                      isLoading.value = false;
-                                        Navigator.pushNamed(context, sales);
-                                    }else if (index == 1){
+                            child: RefreshIndicator(
+                              onRefresh: (){
+                                return callApiRefresh();
+                              },
+                              child: GridView.count(
+                                crossAxisCount: generalNotifier.getAxisCount,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                children: List.generate(3, (index) {
+                                  String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":"Add";
+                                  return SquareTileWidget(
+                                    icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:Icons.add,
+                                    index: index,
+                                    onTap: () async {
+                                      print(index);
+                                      if(index==0){
+                                        isLoading.value = true;
+                                        await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE");
+                                        isLoading.value = false;
+                                          Navigator.pushNamed(context, sales);
+                                      }else if (index == 1){
 
-                                    }else if (index == 2){
-                                      isLoading.value = true;
-                                      await context.read<TotalInvoiceNotifier>().totalInvoiceFetch(context: context).then((value){
-                                        if(value == "OK"){
-                                          Navigator.pushNamed(context, totalInvoice);
-                                        }
+                                      }else if (index == 2){
+                                        isLoading.value = true;
+                                        await context.read<TotalInvoiceNotifier>().totalInvoiceFetch(context: context).then((value){
+                                          if(value == "OK"){
+                                            Navigator.pushNamed(context, totalInvoice);
+                                          }
 
-                                      });
-                                      isLoading.value = false;
+                                        });
+                                        isLoading.value = false;
 
-                                    }
-                                  },
-                                  name: categoryType,
-                                );
-                              })
-                                ..add(kSizedBox2),
+                                      }
+                                    },
+                                    name: categoryType,
+                                  );
+                                })
+                                  ..add(kSizedBox2),
+                              ),
                             ),
                           ),
                           Container(

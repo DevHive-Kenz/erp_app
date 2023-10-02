@@ -8,9 +8,9 @@ part of 'customer_result_model.dart';
 
 CustomerResultModel _$CustomerResultModelFromJson(Map<String, dynamic> json) =>
     CustomerResultModel(
-      id: json['id'] as int?,
+      customerID: json['id'] as int?,
       name: json['name'] as String?,
-      user: json['user'] as int?,
+      user: json['user_id'] as int?,
       nameArabic: json['name_a'] as String?,
       address1: json['address1'] as String?,
       address1A: json['address1_a'] as String?,
@@ -27,13 +27,13 @@ CustomerResultModel _$CustomerResultModelFromJson(Map<String, dynamic> json) =>
       repId: json['rep'] as int?,
       taxId: json['tax_id'] as String?,
       groupId: json['group'] as int?,
-      priceList: json['price_list'] as String?,
+      priceList: json['price_list'] as int?,
     );
 
 Map<String, dynamic> _$CustomerResultModelToJson(
         CustomerResultModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'id': instance.customerID,
       'name': instance.name,
       'name_a': instance.nameArabic,
       'address1': instance.address1,
@@ -52,5 +52,5 @@ Map<String, dynamic> _$CustomerResultModelToJson(
       'tax_id': instance.taxId,
       'group': instance.groupId,
       'price_list': instance.priceList,
-      'user': instance.user,
+      'user_id': instance.user,
     };

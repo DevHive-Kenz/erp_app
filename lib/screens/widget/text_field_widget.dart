@@ -53,7 +53,7 @@ class TextFormFieldCustom extends StatelessWidget {
         controller: controller,
         obscureText: isObscureText,
         readOnly: isReadOnly,
-
+         autofocus: true,
         onTap: onTap,
         enabled: isEnable,
         style: getSemiBoldStyle(color:ColorManager.black),
@@ -75,6 +75,7 @@ class TextFormFieldCustom extends StatelessWidget {
         enableSuggestions: isEditable,
         enableInteractiveSelection: isEditable,
         maxLength: maxLength,
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           errorMaxLines: 3,
           contentPadding: EdgeInsets.symmetric( horizontal: AppPadding.p16),

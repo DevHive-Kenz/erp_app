@@ -63,6 +63,14 @@ class CurrentSaleNotifier extends ChangeNotifier{
   String? get getPoDate => _poDate;
   String? get getDisplayInvoiceID => _displayInvoiceId;
 
+void deleteAnItem({required int index}){
+
+  _items.removeAt(index);
+  // print("ddddddddddd");
+  calculate();
+
+  notifyListeners();
+}
 
   void clearVariables(){
     _selectedPriceFromConvItems = null;
@@ -119,6 +127,11 @@ notifyListeners();
     notifyListeners();
   }
 
+    void setCustomerData({required CustomerResultModel dataCustomer}){
+      _selectedCustomer = dataCustomer;
+    notifyListeners();
+    }
+
 
   void setSalesFirstData({required CustomerResultModel dataCustomer,required int user,required int? soldTo,required String printType,required int invoiceId,required DateTime date, required String soldToName,required String displayInvoiceId, String? poNumber, String? poDate}){
     _user = user;
@@ -130,7 +143,6 @@ notifyListeners();
     _poNumber = poNumber ?? "---";
     _poDate = poDate;
     _selectedCustomer = dataCustomer;
-
     _displayInvoiceId = displayInvoiceId;
     _items = [];
     notifyListeners();
@@ -182,7 +194,6 @@ notifyListeners();
 
   set setPriceFromConversion (ProductItemsModel data){
     _selectedPriceFromConvItems = data;
-
     notifyListeners();
   }
 

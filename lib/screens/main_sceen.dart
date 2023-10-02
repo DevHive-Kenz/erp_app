@@ -10,6 +10,7 @@ import '../provider/general_notifier.dart';
 import '../core/notifier/product_notifier/product_notifier.dart';
 import '../core/notifier/customer_notifier/customer_notifier.dart';
 import '../core/notifier/profile_notifier/profile_notifier.dart';
+import '../core/notifier/master_data_notifier/master_data_notifier.dart';
 import '../core/notifier/sales_return_notifier/sales_return_notifier.dart';
 import 'home_screen/home_screen.dart';
 
@@ -56,9 +57,9 @@ super.initState();
      context.read<ProductNotifier>().product(context: context),
       context.read<ProfileNotifier>().profile(context: context),
       context.read<CustomerNotifier>().customer(context: context),
+      context.read<MasterDataCustomerNotifier>().masterData(context: context),
     ]);
     context.read<GeneralNotifier>().setIsLoading = false;
-
   }
 
   final pages = <Widget>[

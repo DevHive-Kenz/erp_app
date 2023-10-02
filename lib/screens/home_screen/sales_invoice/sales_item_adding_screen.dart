@@ -29,7 +29,10 @@ class SalesItemAddingScreen extends HookWidget {
 
     final currentSaleNotifier = context.read<CurrentSaleNotifier>();
     final salesPostNotifier = context.read<SalesPostNotifier>();
-
+    final chequeNumberController = useTextEditingController();
+    final chequeDateController = useTextEditingController();
+    final paymentNarrationController = useTextEditingController();
+    final transactionNumberController = useTextEditingController();
     final isReceived = useState<bool>(false);
      useEffect(() {
        Future.microtask(() {
@@ -100,6 +103,9 @@ class SalesItemAddingScreen extends HookWidget {
                               itemBuilder: (context, index) {
                                 Map<String,dynamic> data = snapshot.getItemList[index];
                                 return InkWell(
+                                  onDoubleTap: (){
+                                    snapshot.deleteAnItem(index: index);
+                                  },
                                   onLongPress: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => SalesAddScreen(editIndex: index,))),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
@@ -382,6 +388,39 @@ class SalesItemAddingScreen extends HookWidget {
                               ),
                             ),
                           ),
+
+                          kSizedBox10,
+                          paymentType.value == "EFT" || paymentType.value == "CHEQUE"  ?    Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+                            child: Container(
+                              padding:const EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12) ,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                color: ColorManager.greyFill,
+                              ),
+                              child:  Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  paymentType.value == "EFT" ? Column(
+                                    children: [
+                                      TextFormFieldCustom(controller: transactionNumberController,hintName: "Enter Transaction Number *",isValidate: true,),
+                                      kSizedBox10,
+                                      TextFormFieldCustom(controller: paymentNarrationController,hintName: "Enter Payment Narration",),
+                                    ],
+                                  ):paymentType.value == "CHEQUE" ?
+                                  Column(
+                                    children: [
+                                      TextFormFieldCustom(controller: chequeNumberController,hintName: "Cheque Number *",isValidate: true,),
+                                      kSizedBox10,
+                                      TextFormFieldCustom(controller: chequeDateController,hintName: "Cheque Date *",isValidate: true),
+                                      kSizedBox10,
+                                      TextFormFieldCustom(controller: paymentNarrationController,hintName: "Enter Payment Narration",),
+                                    ],
+                                  ):kSizedBox
+                                 ]
+                              ),
+                            ),
+                          ):kSizedBox,
                           kSizedBox10,
                           InkWell(
                             onTap: (){
@@ -398,9 +437,28 @@ class SalesItemAddingScreen extends HookWidget {
                                   btnCancelOnPress: () {},
                                   btnOkText: "yes",
                                   btnOkOnPress: () async {
-                                    isLoading.value =true;
-                                   await salesPostNotifier.salesPost(context: context);
-                                    isLoading.value =false;
+                                    if(paymentType.value == "EFT"){
+                                      if(transactionNumberController.text.isNotEmpty){
+                                        isLoading.value =true;
+                                        await salesPostNotifier.salesPost(context: context);
+                                        isLoading.value =false;
+                                      }else{
+                                        showSnackBar(context: context, text: "Please Enter Transaction Number");
+                                      }
+                                    }else if(paymentType.value == "CHEQUE"){
+                                      if(chequeNumberController.text.isNotEmpty && chequeDateController.text.isNotEmpty){
+                                        isLoading.value =true;
+                                        await salesPostNotifier.salesPost(context: context);
+                                        isLoading.value =false;
+                                      }else{
+                                        showSnackBar(context: context, text: "Please Enter Cheque Number/Date");
+                                      }
+                                    }else{
+                                      isLoading.value =true;
+                                      await salesPostNotifier.salesPost(context: context);
+                                      isLoading.value =false;
+                                    }
+
                                   },
                                   btnOkColor: ColorManager.primaryLight)
                                   .show();

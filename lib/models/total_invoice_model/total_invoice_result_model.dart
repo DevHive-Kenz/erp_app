@@ -23,7 +23,7 @@ class TotalInvoiceResultModel {
   @JsonKey(name: "amount")final num? amount;
   @JsonKey(name: "total_tax")final num? totalTax;
   @JsonKey(name: "date")final DateTime? date;
-  @JsonKey(name: "quotation_id")final String? quotationId;
+  @JsonKey(name: "quotation_id")final int? quotationId;
   @JsonKey(name: "supply_date")final String? supplyDate;
   @JsonKey(name: "contract_number")final String? contractNumber;
   @JsonKey(name: "due_date")final String? dueDate;

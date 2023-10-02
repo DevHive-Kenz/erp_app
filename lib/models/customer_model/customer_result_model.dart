@@ -4,7 +4,7 @@ part 'customer_result_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class CustomerResultModel {
-  final int? id;
+  @JsonKey(name:"id")final int? customerID;
   final String? name;
   @JsonKey(name: "name_a")final String? nameArabic;
   final String? address1;
@@ -22,14 +22,14 @@ class CustomerResultModel {
   @JsonKey(name: "rep")final int? repId;
   @JsonKey(name: "tax_id")final String? taxId;
   @JsonKey(name: "group")final int? groupId;
-  @JsonKey(name: "price_list")final String? priceList;
-  @JsonKey(name: "user")final int? user;
+  @JsonKey(name: "price_list")final int? priceList;
+  @JsonKey(name: "user_id")final int? user;
 
 
 
   CustomerResultModel(
       {
-    this.id,
+    this.customerID,
     this.name,
         this.user,
         this.nameArabic,

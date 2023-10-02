@@ -172,8 +172,8 @@ class TotalInvoice extends HookWidget {
                                           productsNotifier.setSalesFirstData(
                                             user: profileNotifier.getProfile?.result?[0].userId ?? 0,
                                             date: data!.date!,
-                                            invoiceId: data.customerData!.id!,
-                                            displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data.customerData!.id!.toString())}",
+                                            invoiceId: data.invoiceId ?? 0,
+                                            displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data.invoiceId.toString())}",
                                             printType: "thermal",
                                             soldTo: data.soldToId,
                                             soldToName: data.customerData!.name!,
