@@ -13,6 +13,7 @@ import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/screens/widget/text_field_widget.dart';
 import 'package:provider/provider.dart';
+import '../../../constants/app_routes.dart';
 import '../../../constants/font_manager.dart';
 import '../../../core/notifier/profile_notifier/profile_notifier.dart';
 import '../../../models/total_invoice_model/total_invoice_result_model.dart';
@@ -33,16 +34,7 @@ class TotalInvoice extends HookWidget {
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
 
-    String formatString(String input) {
-      // Check if the input string is shorter than 4 characters
-      if (input.length < 4) {
-        // Pad the input string with leading zeros to make it 4 characters long
-        return input.padLeft(4, '0');
-      } else {
-        // If the input is 4 characters or longer, return it as is
-        return input;
-      }
-    }
+
     Future _selectDate(BuildContext context,dateTransfer) async {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       DateTime? picked = await showDatePicker(
@@ -169,11 +161,10 @@ class TotalInvoice extends HookWidget {
                                     Align(
                                         alignment: Alignment.centerRight,
                                         child: CustomButton(onTap: () async {
+                                          // print(data!.date!);
                                           productsNotifier.setSalesFirstData(
                                             user: profileNotifier.getProfile?.result?[0].userId ?? 0,
                                             date: data!.date!,
-                                            invoiceId: data.invoiceId ?? 0,
-                                            displayInvoiceId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data.invoiceId.toString())}",
                                             printType: "thermal",
                                             soldTo: data.soldToId,
                                             soldToName: data.customerData!.name!,
@@ -181,11 +172,11 @@ class TotalInvoice extends HookWidget {
                                             poDate: data.supplyDate,
                                             dataCustomer: data.customerData!,
                                           );
+                                          productsNotifier.setInvoiceID(invoiceId: data.invoiceId ?? 0, displaySeriesId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data.invoiceId.toString())}");
                                           productsNotifier.setRecentProductList=data.items ?? [];
                                           isLoading.value = true;
-                                         await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context);
+                                         Navigator.pushNamed(context, invoicePrintingScreen);
                                           isLoading.value = false;
-
                                         }, title: "Print",width: 80.w,height: 35.h,))
                                   ],
                                 ),

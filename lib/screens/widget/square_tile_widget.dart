@@ -52,7 +52,8 @@ class SquareTileWidget extends HookWidget {
                       fit: BoxFit.fitWidth,
                       child: Text(
                         name,
-                        style: getSemiBoldStyle(color: Colors.white)
+                        style: getSemiBoldStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],

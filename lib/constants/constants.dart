@@ -27,6 +27,9 @@ const kSizedBox = SizedBox();
 SizedBox kSizedBox2 = SizedBox(
   height: 2.h,
 );
+SizedBox kSizedBox6 = SizedBox(
+  height: 6.h,
+);
 SizedBox kSizedBox4 = SizedBox(
   height: 4.h,
 );
@@ -233,6 +236,117 @@ final DateFormat dateFormatter = DateFormat("yyyy-MM-dd");
 //     ),
 //   );
 // }
+
+class MySeparator extends StatelessWidget {
+  const MySeparator({
+    Key? key,
+    this.height = 1,
+    this.color = Colors.black,
+    this.isDouble = false,
+  }) : super(key: key);
+
+  final double height;
+  final Color color;
+  final bool isDouble;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final boxWidth = constraints.constrainWidth();
+        const dashWidth = 2.0;
+        final dashHeight = height;
+        final dashCount = (boxWidth / (2 * dashWidth)).floor();
+        return Column(
+          children: [
+            kSizedBox4,
+            Flex(
+              children: List.generate(dashCount, (_) {
+                if (isDouble) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: dashWidth,
+                        height: dashHeight,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(color: color),
+                        ),
+                      ),
+                       kSizedBox2,
+                       // Add spacing between double dashes
+                      SizedBox(
+                        width: dashWidth,
+                        height: dashHeight,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(color: color),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox(
+                    width: dashWidth,
+                    height: dashHeight,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: color),
+                    ),
+                  );
+                }
+              }),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              direction: Axis.horizontal,
+            ),
+           isDouble ? kSizedBox6:kSizedBox4 ,
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+String formatString(String input) {
+  // Check if the input string is shorter than 4 characters
+  if (input.length < 4) {
+    // Pad the input string with leading zeros to make it 4 characters long
+    return input.padLeft(4, '0');
+  } else {
+    // If the input is 4 characters or longer, return it as is
+    return input;
+  }
+}
+
+Future selectDate(
+    {TextEditingController? dateTransfer, required BuildContext context}) async {
+  final DateTime nowDate = DateTime.now();
+
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: nowDate,
+    firstDate: DateTime(1900),
+    // lastDate: DateTime.now(),
+
+    lastDate: DateTime(20 + nowDate.year),
+    builder: (context, child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          primaryColor: ColorManager.primaryLight,
+          colorScheme: ColorScheme.light(primary: ColorManager.primaryLight),
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        ),
+        child: child!,
+      );
+    },
+  );
+  if (picked != null) {
+
+      dateTransfer?.text = formatter.format(picked);
+
+  }
+}
+
+
 
 //SnackBar
 void showSnackBar(

@@ -189,20 +189,17 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
 
     Future<String?> printTicket() async {
       String? isConnected = await BluetoothThermalPrinter.connectionStatus;
-
       if (isConnected == "true") {
         try{
           if(widget.isAccessInside == true){
-            await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context).then((value) {
-              Navigator.pushReplacementNamed(context, homeRoute);
-            });
+              Navigator.pushReplacementNamed(context, invoicePrintingScreen);
           }else {
             List<int>? bytes = await getTicket();
             await BluetoothThermalPrinter.writeBytes(bytes!);
           }
-
-        }catch(e){  await context.read<InvoicePrintingNotifier>().printBluetoothInvoice(context: context);
-print(e);
+        }catch(e){
+          Navigator.pushNamed(context, printerSettingsScreen);
+          print(e);
         }
         return "OK";
       } else {
@@ -344,8 +341,6 @@ print(e);
                                 }
                               });
                             });
-
-
                             // setConnect(r.device.remoteId.toString()).then((value) {
                             //
                             //   Navigator.push(context, MaterialPageRoute(builder: (context) =>PrintIII(mac:r.device.remoteId.toString() ,title: "Preview",)));
@@ -456,13 +451,13 @@ class _PrintIIIState extends State<PrintIII> {
     List<int> bytes = [];
     CapabilityProfile profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm80, profile);
-    bytes += generator.text("Demo Shop1",
-        styles: PosStyles(
-          align: PosAlign.center,
-          height: PosTextSize.size3,
-          width: PosTextSize.size3,
-        ),
-      );
+    // bytes += generator.text("Demo Shop1",
+    //     styles: PosStyles(
+    //       align: PosAlign.center,
+    //       height: PosTextSize.size3,
+    //       width: PosTextSize.size3,
+    //     ),
+    //   );
     final im.Image? image = im.decodeImage(theimageThatComesfr);
     // bytes += generator.image(image!);
     bytes += generator.imageRaster(image!,align: PosAlign.center);
@@ -528,103 +523,454 @@ class _PrintIIIState extends State<PrintIII> {
                       controller: screenshotController,
                       child: Container(
                         color: ColorManager.white,
-                          width: 200,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                          width: 190,
+                          child:  Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "محمد نعم",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black),
-                              ),
-                              // Text(
-                              //     "----------------------------------------------------------------------------------"),
-                              Center(
-                                child: Text  (
-                                  "رقم الطلب",
-                                  style: TextStyle(
-                                      fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black),
-                                ),
-                              ),
-                              // SizedBox(
-                              //   height: 20,
-                              //   child: Text(
-                              //       "-------------------------------------------------------------------------------------",style: TextStyle(color: ColorManager.black),),
-                              // ),
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "التفاصيل",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,color: ColorManager.black),
+                              Center(child: Text("Al Khair Demo",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s18),textAlign: TextAlign.center,)),
+                              kSizedBox10,
+                              Center(child: Text("Tax Invoice/فاتورة ضريبية",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s14),textAlign: TextAlign.center,)),
+                              kSizedBox20,
+                              Text("al Jubail, Saudi arabia",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize:FontSize.s9),),
+                              Text("الجبيل ,السعودية",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              Text("VAT: 33392938343922",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              Text("CRN: 233929383922",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              MySeparator(color: ColorManager.black),
+                              Text("Rohshan Shop",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize:FontSize.s9),),
+                              Text("متجر روشان",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize:FontSize.s9),),
+                              Text("shihat, dammam Saudi Arabia",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              Text("شيهات, الدمام السعودية",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize:FontSize.s9,)),
+                              Text("VAT: 323233222334432",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              Text("CRN: 232119302",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
+                              MySeparator(color: ColorManager.black,isDouble: true,),
+
+                              Container(
+                                // padding: EdgeInsets.symmetric(horizontal:AppPadding.p16),
+                                child: Table(
+
+                                  children: <TableRow>[
+                                    TableRow(
+                                      children: < Widget>[
+                                        Text(
+                                            'فاتورة',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'تاريخ',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'وقت',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'قسط',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10,),
+                                            textAlign: TextAlign.center
+
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "السعر",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,color: ColorManager.black),
+                                    TableRow(
+                                      children: < Widget>[
+                                        Text(
+                                            'Invoice',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'Date',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'Time',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'Payment',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10,),
+                                            textAlign: TextAlign.center
+
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "العدد",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,color: ColorManager.black),
+                                    TableRow(
+                                      children: <Widget>[
+                                        MySeparator(color: ColorManager.black),
+                                       MySeparator(color: ColorManager.black),
+                                       MySeparator(color: ColorManager.black),
+                                       MySeparator(color: ColorManager.black),
+                                      ],
+                                    ),
+
+                                    TableRow(
+                                      children: < Widget>[
+                                        Text(
+                                            "SLV 909",
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            '03-09-2023',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            '09:23 PM',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Text(
+                                            'Cash',
+                                            style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                            textAlign: TextAlign.center
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
-                              // ListView.builder(
-                              //   scrollDirection: Axis.vertical,
-                              //   shrinkWrap: true,
-                              //   physics: ScrollPhysics(),
-                              //   itemCount: 4,
-                              //   itemBuilder: (context, index) {
-                              //     return Card(
-                              //       child: Row(
-                              //         mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //         crossAxisAlignment: CrossAxisAlignment.start,
-                              //         children: [
-                              //           Expanded(
-                              //             child: Center(
-                              //               child: Text(
-                              //                 "臺灣",
-                              //                 style: TextStyle(fontSize: 25),
-                              //               ),
-                              //             ),
-                              //             flex: 6,
-                              //           ),
-                              //           Expanded(
-                              //             child: Center(
-                              //               child: Text(
-                              //                 "تجربة عيوني انتة ",
-                              //                 style: TextStyle(fontSize: 25),
-                              //               ),
-                              //             ),
-                              //             flex: 2,
-                              //           ),
-                              //           Expanded(
-                              //             child: Center(
-                              //               child: Text(
-                              //                 "Test My little pice of huny",
-                              //                 style: TextStyle(fontSize: 25),
-                              //               ),
-                              //             ),
-                              //             flex: 2,
-                              //           ),
-                              //         ],
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
-                              Text(
-                                  "----------------------------------------------------------------------------------"),
-                            ],
-                          )),
+                              kSizedBox10,
+                              Container(
+                                // padding: EdgeInsets.symmetric(horizontal:AppPadding.p16),
+                                child: Column(
+                                  children: [
+                                    Row(
+
+                                      children: [
+                                                  SizedBox(
+                                                    width:23.33,
+                                                    child: Text(
+                                                        'غرض',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'الكمية',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'وحدة',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'القرص',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'سعر',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'الفرعية',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                      ],
+                                    ),
+                                    Row(
+
+                                      children: [
+                                                  SizedBox(
+                                                    width:23.33,
+                                                    child: Text(
+                                                        'Item',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'QTY',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'Unit',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'Disc.',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'Rate',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 33.33,
+                                                    child: Text(
+                                                        'SUB',
+                                                        style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                                        textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                      ],
+                                    ),
+                                    MySeparator(color: ColorManager.black),
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          width:188,
+                                          child: Text(
+                                              'Madhfoon Chiken with rice',
+                                              style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                              textAlign: TextAlign.left
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width:188,
+                                          child: Text(
+                                              'دجاج مدفون مع الأرز',
+                                              style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                              textAlign: TextAlign.left
+                                          ),
+                                        ),
+                                        Row(
+
+                                          children: [
+                                            SizedBox(
+                                              width:23.33,
+                                              child: Text(
+                                                  '',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '22',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  'KG',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '0.00',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '1.00',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '22',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            )
+
+                                          ],
+                                        ),
+
+                                      ],
+                                    ),
+                                    kSizedBox2,
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          width:188,
+                                          child: Text(
+                                              'Kabsa rise with alfaham',
+                                              style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                              textAlign: TextAlign.left
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width:188,
+                                          child: Text(
+                                              'كبسة ترتفع مع الفحام',
+                                              style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                              textAlign: TextAlign.left
+                                          ),
+                                        ),
+                                        Row(
+
+                                          children: [
+                                            SizedBox(
+                                              width:33.33,
+                                              child: Text(
+                                                  '',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 23.33,
+                                              child: Text(
+                                                  '22',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  'KG',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '0.00',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '1.00',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 33.33,
+                                              child: Text(
+                                                  '22',
+                                                  style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s8),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            )
+
+                                          ],
+                                        ),
+
+                                      ],
+                                    ),
+                                    kSizedBox2,
+
+
+
+                                  ],
+                                )
+                              ),
+                              MySeparator(color: ColorManager.black,isDouble: true,),
+                              ///sub total area
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child:    Container(
+                                  // padding: EdgeInsets.all(AppPadding.p16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // Subtotal
+                                      Text(
+                                          'Subtotal / المجموع الفرعي (SAR): 493.00',
+                                          style: getSemiBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                          textAlign: TextAlign.center
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                          'Discount / تخفيض (SAR): 493.00',
+                                          style: getSemiBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                          textAlign: TextAlign.center
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                          'VAT / ضريبة القيمة المضافة (SAR): 493.00',
+                                          style: getSemiBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                          textAlign: TextAlign.center
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                          'Net Due / صافي نتيجة (SAR): 493.00',
+                                          style: getSemiBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s10),
+                                          textAlign: TextAlign.center
+                                      ),
+                                      SizedBox(height: 5),
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+                            ]
+                          ),
+
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -637,3 +983,134 @@ class _PrintIIIState extends State<PrintIII> {
     );
   }
 }
+// [
+// Text(
+// 'فف عغب عه',
+// style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// SizedBox(height: 8),
+// Text(
+// 'ثخلنرس ثبة ثب',
+// style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// SizedBox(height: 16),
+// Text(
+// 'ينخبخ ينبة ينني',
+// style: TextStyle(fontSize: 16,color: ColorManager.black)
+// ),
+// SizedBox(height: 8),
+// Text(
+// 'VAT: Your Company VAT',
+// style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// Text(
+// 'CRN: Your Company CRN',
+// style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+//const MySeparator(color: ColorManager.black),
+// Text(
+// 'سخين ييخس',
+// style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// Text(
+// 'ينءنش يخسحسا لا',
+// style: TextStyle(fontSize: 16,color: ColorManager.black)
+// ),
+// Text(
+// 'CRN: سرر صلقس',
+// style: TextStyle(fontSize: 16,color: ColorManager.black),
+// ),
+// Text(
+// 'VAT: لسق ثف ',
+// style: TextStyle(fontSize: 16,color: ColorManager.black),
+// ),
+//const MySeparator(color: ColorManager.black),
+// Text(
+// 'قثصق ',
+// style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// SizedBox(height: 8),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('Invoice Date:', style: TextStyle(fontSize: 16,color: ColorManager.black)),
+// Text('2023-10-05', style: TextStyle(fontSize: 16,color: ColorManager.black)),
+// ],
+// ),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('ثبس ثصب', style: TextStyle(fontSize: 16,color: ColorManager.black)),
+// Text('CASH', style: TextStyle(fontSize: 16,color: ColorManager.black)),
+// ],
+// ),
+// // ... Add more invoice details as needed
+//const MySeparator(color: ColorManager.black),
+// Text(
+// 'بقب ',
+// style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('ثقب', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// Text('ثب', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// Text('بثب', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// Text('ثبس', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// Text('سثب', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// Text('سبث', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: ColorManager.black)),
+// ],
+// ),
+//const MySeparator(color: ColorManager.black),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('سثبي ب', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// Text('2', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// Text('يسب', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// Text('0.50', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// Text('10.00', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// Text('20.00', style: TextStyle(fontSize: 14,color: ColorManager.black)),
+// ],
+// ),
+//const MySeparator(color: ColorManager.black),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('يسبيس (SAR):', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// Text('200.00', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// ],
+// ),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('سبي (SAR):', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// Text('10.00', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// ],
+// ),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('سبسي  (SAR):', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// Text('15.00', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// ],
+// ),
+// Row(
+// mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text('سيبسي بث (SAR):',style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// Text('205.00', style: TextStyle(fontSize: 8,color: ColorManager.black)),
+// ],
+// ),
+//const MySeparator(color: ColorManager.black),
+// Text(
+// 'Tتعر تاارر ارا',
+// style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: ColorManager.black),
+// ),
+// SizedBox(height: 8),
+// Text(
+// 'POWERED BY KENZ TECHNOLOGY\nwww.kenztechnology.com\n+966 53 903 6749',
+// style: TextStyle(fontSize: 14,color: ColorManager.black),
+// textAlign: TextAlign.center
+// ),
+// ],

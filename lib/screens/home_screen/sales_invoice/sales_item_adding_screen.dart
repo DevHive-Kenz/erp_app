@@ -7,7 +7,9 @@ import 'package:kenz_app/constants/constants.dart';
 import 'package:kenz_app/constants/font_manager.dart';
 import 'package:kenz_app/constants/style_manager.dart';
 import 'package:kenz_app/constants/values_manger.dart';
+import 'package:kenz_app/core/notifier/sales_return/sales_return_post_notifier.dart';
 import 'package:kenz_app/provider/current_sale_notifier.dart';
+import 'package:kenz_app/provider/general_notifier.dart';
 import 'package:kenz_app/screens/home_screen/sales_invoice/sales_add_item_screen.dart';
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:provider/provider.dart';
@@ -29,10 +31,13 @@ class SalesItemAddingScreen extends HookWidget {
 
     final currentSaleNotifier = context.read<CurrentSaleNotifier>();
     final salesPostNotifier = context.read<SalesPostNotifier>();
+    final salesReturnPostNotifier = context.read<SalesReturnPostNotifier>();
     final chequeNumberController = useTextEditingController();
     final chequeDateController = useTextEditingController();
     final paymentNarrationController = useTextEditingController();
     final transactionNumberController = useTextEditingController();
+    final generalNotifier = context.watch<GeneralNotifier>();
+
     final isReceived = useState<bool>(false);
      useEffect(() {
        Future.microtask(() {
@@ -45,6 +50,18 @@ class SalesItemAddingScreen extends HookWidget {
        return null;
 
      },[]);
+
+     Future<void> checkoutFun() async {
+       isLoading.value =true;
+
+       if(generalNotifier.getTypeOfTransaction == Transaction.sales){
+      await salesPostNotifier.salesPost(context: context);
+    }else if(generalNotifier.getTypeOfTransaction == Transaction.salesReturn){
+         await salesReturnPostNotifier.salesReturnPost(context: context);
+       }
+       isLoading.value =false;
+
+     }
     return  Scaffold(
 
       body: SafeArea(
@@ -104,7 +121,9 @@ class SalesItemAddingScreen extends HookWidget {
                                 Map<String,dynamic> data = snapshot.getItemList[index];
                                 return InkWell(
                                   onDoubleTap: (){
-                                    snapshot.deleteAnItem(index: index);
+                                    if(generalNotifier.getTypeOfTransaction != Transaction.salesReturn) {
+                                      snapshot.deleteAnItem(index: index);
+                                    }
                                   },
                                   onLongPress: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => SalesAddScreen(editIndex: index,))),
                                   child: Padding(
@@ -184,10 +203,10 @@ class SalesItemAddingScreen extends HookWidget {
                             ),
                           ),
                           kSizedBox10,
-                          Padding(
+                          generalNotifier.getTypeOfTransaction != Transaction.salesReturn ?   Padding(
                             padding: EdgeInsets.symmetric(horizontal: AppPadding.p16),
                             child: InkWell(
-                              onTap: ()=> Navigator.pushNamed(context, salesAddScreen),
+                              onTap: ()=> Navigator.pushNamed(context, salesAddScreen) ,
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: AppPadding.p16, vertical: AppPadding.p12),
                                 decoration: BoxDecoration(
@@ -219,7 +238,7 @@ class SalesItemAddingScreen extends HookWidget {
                                 ),
                               ),
                             ),
-                          ),
+                          ): kSizedBox,
                           kSizedBox10,
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
@@ -412,7 +431,9 @@ class SalesItemAddingScreen extends HookWidget {
                                     children: [
                                       TextFormFieldCustom(controller: chequeNumberController,hintName: "Cheque Number *",isValidate: true,),
                                       kSizedBox10,
-                                      TextFormFieldCustom(controller: chequeDateController,hintName: "Cheque Date *",isValidate: true),
+                                      TextFormFieldCustom(controller: chequeDateController,hintName: "Cheque Date *",isReadOnly: true,isValidate: true,onTap:(){
+                                        selectDate(context: context,dateTransfer: chequeDateController);
+                                      },),
                                       kSizedBox10,
                                       TextFormFieldCustom(controller: paymentNarrationController,hintName: "Enter Payment Narration",),
                                     ],
@@ -439,24 +460,19 @@ class SalesItemAddingScreen extends HookWidget {
                                   btnOkOnPress: () async {
                                     if(paymentType.value == "EFT"){
                                       if(transactionNumberController.text.isNotEmpty){
-                                        isLoading.value =true;
-                                        await salesPostNotifier.salesPost(context: context);
-                                        isLoading.value =false;
+                                        checkoutFun();
                                       }else{
                                         showSnackBar(context: context, text: "Please Enter Transaction Number");
                                       }
                                     }else if(paymentType.value == "CHEQUE"){
                                       if(chequeNumberController.text.isNotEmpty && chequeDateController.text.isNotEmpty){
-                                        isLoading.value =true;
-                                        await salesPostNotifier.salesPost(context: context);
-                                        isLoading.value =false;
+                                        checkoutFun();
+
                                       }else{
                                         showSnackBar(context: context, text: "Please Enter Cheque Number/Date");
                                       }
                                     }else{
-                                      isLoading.value =true;
-                                      await salesPostNotifier.salesPost(context: context);
-                                      isLoading.value =false;
+                                      checkoutFun();
                                     }
 
                                   },
@@ -508,13 +524,17 @@ class SalesItemAddingScreen extends HookWidget {
                 }
               ),
             ),
-            isLoading.value ? Positioned.fill(
-                child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      color: const Color(0x66ffffff),
-                      child: const CircularProgressIndicatorWidget(),
-                    ))):kSizedBox
+            Consumer<SalesPostNotifier>(
+              builder: (context, snapshot,_) {
+                return  snapshot.getIsLoading ? Positioned.fill(
+                    child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          color: const Color(0x66ffffff),
+                          child: const CircularProgressIndicatorWidget(),
+                        ))):kSizedBox;
+              }
+            )
           ],
         ),
       ),

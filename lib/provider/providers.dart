@@ -13,7 +13,8 @@ import '../core/notifier/product_notifier/product_notifier.dart';
 import '../core/notifier/customer_notifier/customer_notifier.dart';
 import '../core/notifier/profile_notifier/profile_notifier.dart';
 import '../core/notifier/sales_post_notifier/sales_post_notifier.dart';
-import '../core/notifier/sales_return_notifier/sales_return_notifier.dart';
+import '../core/notifier/sales_return/sales_return_notifier.dart';
+import '../core/notifier/sales_return/sales_return_post_notifier.dart';
 import '../core/notifier/series_fetch_notifier/series_fetch_notifier.dart';
 import '../core/notifier/total_invoice/total_invoice_notifier.dart';
 import 'current_sale_notifier.dart';
@@ -45,6 +46,7 @@ List<SingleChildWidget> providersList = [
   ChangeNotifierProvider(create: (_) => CurrentSaleNotifier()),
   ChangeNotifierProvider(create: (_) => InvoicePrintingNotifier()),
   ChangeNotifierProvider(create: (_) => SalesPostNotifier()),
+  ChangeNotifierProvider(create: (_) => SalesReturnPostNotifier()),
 
   ///product
   ChangeNotifierProvider(create: (_) => CustomerNotifier()),

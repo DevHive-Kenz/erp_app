@@ -10,7 +10,7 @@ import '../../../constants/values_manger.dart';
 class TextFormFieldCustom extends StatelessWidget {
   final TextEditingController controller;
   final String? hintName;
-  final IconData? icon;
+  final String? prefixText;
   final bool isObscureText;
   final bool isValidate;
   final int? maxLength,maxLine;
@@ -28,7 +28,7 @@ class TextFormFieldCustom extends StatelessWidget {
   const TextFormFieldCustom(
       {required this.controller,
         this.hintName,
-        this.icon,
+        this.prefixText,
         this.onChanged,
         this.validator,
         this.isEditable = true,
@@ -88,10 +88,13 @@ class TextFormFieldCustom extends StatelessWidget {
             borderRadius:const  BorderRadius.all(Radius.circular(8.0)),
             borderSide: BorderSide(color:ColorManager.primaryLight),
           ),
-          prefixIcon: icon!=null ? Icon(
-            icon,
-            color: ColorManager.primaryLight ,
-          ):null,
+          prefixIcon: prefixText!=null ? Align(
+              alignment: Alignment.centerLeft,
+              widthFactor: 0,
+              child: Padding(
+                padding: const EdgeInsets.only(left: AppPadding.p16),
+                child: Text(prefixText!,style: getBoldStyle(color: ColorManager.primaryLight),textAlign: TextAlign.center,),
+              )):null,
 
           // hintText: hintName,
           labelText: hintName,

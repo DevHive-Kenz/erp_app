@@ -1,9 +1,11 @@
 
 import 'package:kenz_app/screens/home_screen/home_screen.dart';
 import '../screens/home_screen/customer_create_screen/customer_create_screen.dart';
+import '../screens/home_screen/printig_screen/invoice_printing_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_add_item_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_invoice_screen.dart';
 import '../screens/home_screen/sales_invoice/sales_item_adding_screen.dart';
+import '../screens/home_screen/sales_return/sales_return_screen.dart';
 import '../screens/home_screen/settings/bluetooth_printer_setup_screen.dart';
 import '../screens/home_screen/settings/printer_settings_screen.dart';
 import '../screens/home_screen/settings/settings_screen.dart';
@@ -25,6 +27,8 @@ const String printerSettingsScreen = "/printerSettingsScreen";
 const String bluetoothPrinterScreen = "/bluetoothPrinterScreen";
 const String totalInvoice = "/totalInvoice";
 const String customerCreateScreen = "/customerCreateScreen";
+const String salesReturnScreen = "/salesReturnScreen";
+const String invoicePrintingScreen = "/invoicePrintingScreen";
 
 
 
@@ -43,5 +47,7 @@ final routes = {
   bluetoothPrinterScreen: (context) =>  const BluetoothPrinterScreen(),
   totalInvoice: (context) =>  const TotalInvoice(),
   customerCreateScreen: (context) =>  const CustomerCRUDScreen(),
+  salesReturnScreen: (context) =>  const SalesReturnScreen(),
+  invoicePrintingScreen: (context) =>   InvoicePrintingScreen(),
 
 };

@@ -4,12 +4,12 @@ import 'package:kenz_app/constants/string_manager.dart';
 import '../core/service/shared_preferance_service.dart';
 
 
-
+enum Transaction{ sales, salesReturn, totalSales, totalSalesReturn}
 class GeneralNotifier extends ChangeNotifier {
 
 
   int _axisCount = 2;
-
+  Transaction _typeOfTransaction = Transaction.sales;
   String? _userName;
   bool _isLoading = false;
 
@@ -20,8 +20,14 @@ class GeneralNotifier extends ChangeNotifier {
   bool get getIsLoading => _isLoading;
   String? get getUserName => _userName;
   String? get getBluetoothPrinterMacID => _bluetoothPrinterMacId;
+  Transaction get getTypeOfTransaction => _typeOfTransaction;
 
-   set bluetoothPrinterMacId(String macID){
+set setTypeOfTransaction(Transaction type){
+  _typeOfTransaction = type;
+  notifyListeners();
+}
+
+  set bluetoothPrinterMacId(String macID){
     _bluetoothPrinterMacId = macID;
     notifyListeners();
   }

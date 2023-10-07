@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../../models/product_model/product_items_model.dart';
 import '../../../models/product_model/product_result_model.dart';
 import '../../../models/product_model/product_unit_conversion_model.dart';
+import '../../../provider/general_notifier.dart';
 import '../../../provider/search_notifier.dart';
 import '../../widget/appbar_main_widget.dart';
 import '../../widget/text_field_widget.dart';
@@ -36,6 +37,7 @@ class SalesAddScreen extends HookWidget {
     final productNotifier = context.read<ProductNotifier>();
     final currentNotifier = context.read<CurrentSaleNotifier>();
     final itemNameController = useTextEditingController();
+    final itemNameAController = useTextEditingController();
     final qtyController  = useTextEditingController();
     final unitController = useTextEditingController();
     final rateController = useTextEditingController();
@@ -46,10 +48,11 @@ class SalesAddScreen extends HookWidget {
     final qtyFocus = useFocusNode();
     final discountPercentController = useTextEditingController(text: "0.00");
     final discountFixedController = useTextEditingController(text: "0.00");
-    final taxPercentController = useTextEditingController(text: "0% VAT");
+    final taxPercentController = useTextEditingController(text: "15% VAT");
     ValueNotifier<double> subtotal = useState<double>(0.00);
     ValueNotifier<double> disTotal = useState<double>(0.00);
     ValueNotifier<double> vatTotal = useState<double>(0.00);
+    final generalNotifier = context.read<GeneralNotifier>();
 
 
     void preFillData(){
@@ -67,21 +70,18 @@ class SalesAddScreen extends HookWidget {
         disTotal.value = currentNotifier.getItemList[editIndex!]["discount_amount"];
         ///notifier setting
         currentNotifier.setVatPercent = currentNotifier.getItemList[editIndex!]["tax"].toString();
-        currentNotifier.setProduct = currentNotifier.getItemList[editIndex!]["productModel"];
-        currentNotifier.setPriceList = currentNotifier.getItemList[editIndex!]["priceListModel"];
-        currentNotifier.setConversion = currentNotifier.getItemList[editIndex!]["conversionModel"];
-        currentNotifier.setPriceFromConversion = currentNotifier.getItemList[editIndex!]["fromConversionItemModel"];
-
+        generalNotifier.getTypeOfTransaction != Transaction.salesReturn ? currentNotifier.setProduct = currentNotifier.getItemList[editIndex!]["productModel"]:null;
+        generalNotifier.getTypeOfTransaction != Transaction.salesReturn ? currentNotifier.setPriceList = currentNotifier.getItemList[editIndex!]["priceListModel"]:null;
+        generalNotifier.getTypeOfTransaction != Transaction.salesReturn ? currentNotifier.setConversion = currentNotifier.getItemList[editIndex!]["conversionModel"]:null;
+        generalNotifier.getTypeOfTransaction != Transaction.salesReturn ? currentNotifier.setPriceFromConversion = currentNotifier.getItemList[editIndex!]["fromConversionItemModel"] : null;
       }
     }
 
     useEffect(() {
-
       Future.microtask(() {
         preFillData();
         currentNotifier.clearVariables();
       },);
-
       return null;
     },[]);
 
@@ -93,12 +93,10 @@ class SalesAddScreen extends HookWidget {
       priceListController.clear();
       discountPercentController.text="0.00";
       discountFixedController.text="0.00";
-      taxPercentController.text="0% VAT";
+      taxPercentController.text="15% VAT";
       disTotal.value = 0.00;
       vatTotal.value = 0.00;
     }
-
-
 
     ///select unit
     void selectUnitFunc(){
@@ -160,7 +158,7 @@ class SalesAddScreen extends HookWidget {
                                               return GestureDetector(
                                                 onTap: () {
                                                   currentNotifier.setConversion = data;
-                                                  taxPercentController.clear();
+                                                  // taxPercentController.clear();
                                                   disTotal.value = 0.00;
                                                   vatTotal.value = 0.00;
                                                   data.items?.forEach((element) {
@@ -262,7 +260,7 @@ class SalesAddScreen extends HookWidget {
                                               ProductItemsModel? data = currentNotifier.getSelectedProduct?.basePriceData?[index];
                                               return GestureDetector(
                                                 onTap: () {
-                                                  taxPercentController.clear();
+                                                  // taxPercentController.clear();
                                                   disTotal.value = 0.00;
                                                   vatTotal.value = 0.00;
                                                   currentNotifier.setPriceList = data!;
@@ -384,6 +382,7 @@ class SalesAddScreen extends HookWidget {
                                                 print("qwe2 ${data.unitConversionData?.length}");
 
                                                 itemNameController.text = "${data.name}";
+                                                itemNameAController.text = "${data.nameArabic}";
                                                 searchProduct.changeSearchString("");
                                                 Navigator.pop(context);
                                                 selectPriceListFun();
@@ -536,11 +535,12 @@ class SalesAddScreen extends HookWidget {
                               hintName: "Select Item *",
                               isReadOnly: true,
                               onTap: (){
-                                productDetailFun();
+                                generalNotifier.getTypeOfTransaction != Transaction.salesReturn ?
+                                productDetailFun():null;
                               },
                             ),
                             kSizedBox15,
-                            Row(
+                            generalNotifier.getTypeOfTransaction != Transaction.salesReturn ?   Row(
                               children: [
                                 Expanded(
                                   child: TextFormFieldCustom(
@@ -565,7 +565,7 @@ class SalesAddScreen extends HookWidget {
                                   ),
                                 ),
                               ],
-                            ),
+                            ):kSizedBox,
                             kSizedBox15,
                             Row(
                               children: [
@@ -576,16 +576,18 @@ class SalesAddScreen extends HookWidget {
                                     hintName: "Quantity *",
                                     focus: qtyFocus,
                                     onChanged: (value){
+                                      // taxPercentController.clear();
                                       if(value.isNotEmpty){
                                         double val = double.parse(value);
-                                        if(val>0 && rateController.text.isNotEmpty){
+                                        if(val>=0 && rateController.text.isNotEmpty){
                                           subtotal.value = val * double.parse(rateController.text);
                                           disTotal.value = subtotal.value * (double.parse(discountPercentController.text) / 100);
                                           vatTotal.value = (subtotal.value - disTotal.value) * (currentNotifier.getVatPercent / 100);
-                                        }else{
-                                          showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
-                                          qtyController.clear();
                                         }
+                                        // else{
+                                        //   showAwesomeDialogue(title: "INFO", content: "Quantity & Rate should be larger than zero", type: DialogType.INFO);
+                                        //   // qtyController.clear();
+                                        // }
                                       }
 
                                     },
@@ -597,6 +599,7 @@ class SalesAddScreen extends HookWidget {
                                     controller: rateController,
                                     inputType: TextInputType.number,
                                     hintName: "Rate ",
+                                    isReadOnly:  generalNotifier.getTypeOfTransaction != Transaction.salesReturn ? false : true,
                                     validator:  (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter rate';
@@ -612,6 +615,8 @@ class SalesAddScreen extends HookWidget {
                                       return null;
                                     },
                                     onChanged: (value){
+                                      // taxPercentController.clear();
+
                                       if(value.isNotEmpty){
                                         double val = double.parse(value);
                                         subtotal.value = val * double.parse(qtyController.text);
@@ -663,6 +668,7 @@ class SalesAddScreen extends HookWidget {
                         Text("Totals & Taxes",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s16),),
 
                         kSizedBox15,
+                   generalNotifier.getTypeOfTransaction != Transaction.salesReturn ?
                         Row(
                           children: [
                             Expanded(
@@ -726,7 +732,7 @@ class SalesAddScreen extends HookWidget {
                               ),
                             ),
                           ],
-                        ),
+                        ):kSizedBox,
                         kSizedBox15,
                         TextFormFieldCustom(
                           controller: taxPercentController,
@@ -794,6 +800,7 @@ class SalesAddScreen extends HookWidget {
                                   if(editIndex !=null){
                                     currentNotifier.updateProductList({
                                       "item": itemNameController.text,
+                                      "itemA": itemNameAController.text,
                                       "quantity": double.parse(qtyController.text),
                                       "unit":unitController.text,
                                       "price": double.parse(rateController.text),
@@ -813,6 +820,7 @@ class SalesAddScreen extends HookWidget {
                                   }else {
                                     currentNotifier.setProductList = {
                                       "item": itemNameController.text,
+                                      "itemA": itemNameAController.text,
                                       "quantity": double.parse(qtyController.text),
                                       "unit":unitController.text,
                                       "price": double.parse(rateController.text),
@@ -846,6 +854,7 @@ class SalesAddScreen extends HookWidget {
                                   if(editIndex !=null){
                                     currentNotifier.updateProductList({
                                       "item": itemNameController.text,
+                                      "itemA": itemNameAController.text,
                                       "quantity": double.parse(qtyController.text),
                                       "unit":unitController.text,
                                       "price": double.parse(rateController.text),
@@ -864,7 +873,8 @@ class SalesAddScreen extends HookWidget {
                                     }, editIndex);
                                   }else {
                                     currentNotifier.setProductList = {
-                                      "item": itemNameController.text,
+                                      "item": "${itemNameController.text}-${itemNameAController.text}",
+                                      "itemA": itemNameAController.text,
                                       "quantity": double.parse(qtyController.text),
                                       "unit":unitController.text,
                                       "price": double.parse(rateController.text),

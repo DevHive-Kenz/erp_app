@@ -13,6 +13,7 @@ import 'package:kenz_app/screens/widget/square_tile_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/values_manger.dart';
 import '../../constants/app_routes.dart';
+import '../../provider/current_sale_notifier.dart';
 import '../widget/Circular_progress_indicator_widget.dart';
 import '../../core/notifier/product_notifier/product_notifier.dart';
 import '../../core/notifier/customer_notifier/customer_notifier.dart';
@@ -27,6 +28,8 @@ class HomeScreen extends HookWidget {
     final generalNotifier = context.watch<GeneralNotifier>();
     double screenWidth = MediaQuery.of(context).size.width;
     final isEditingEnabled = useState<bool>(false);
+    final currentNotifier = context.read<CurrentSaleNotifier>();
+
     final isLoading = useState<bool>(false);
 
     useEffect(() {
@@ -84,21 +87,29 @@ class HomeScreen extends HookWidget {
                                 crossAxisCount: generalNotifier.getAxisCount,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                children: List.generate(3, (index) {
-                                  String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":"Add";
+                                children: List.generate(4, (index) {
+                                  String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":index == 3 ? "Create\nCustomer":"Add";
                                   return SquareTileWidget(
-                                    icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:Icons.add,
+                                    icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:index == 3 ? Icons.person:Icons.add,
                                     index: index,
                                     onTap: () async {
                                       print(index);
                                       if(index==0){
+                                       generalNotifier.setTypeOfTransaction= Transaction.sales;
                                         isLoading.value = true;
                                         await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE");
                                         isLoading.value = false;
                                           Navigator.pushNamed(context, sales);
                                       }else if (index == 1){
+                                        currentNotifier.clearAll();
 
+                                        generalNotifier.setTypeOfTransaction= Transaction.salesReturn;
+                                        isLoading.value = true;
+                                        await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE_RETURN");
+                                        isLoading.value = false;
+                                        Navigator.pushNamed(context, salesReturnScreen);
                                       }else if (index == 2){
+                                        generalNotifier.setTypeOfTransaction= Transaction.totalSales;
                                         isLoading.value = true;
                                         await context.read<TotalInvoiceNotifier>().totalInvoiceFetch(context: context).then((value){
                                           if(value == "OK"){
@@ -108,6 +119,8 @@ class HomeScreen extends HookWidget {
                                         });
                                         isLoading.value = false;
 
+                                      }else if(index == 3){
+                                        Navigator.pushNamed(context, customerCreateScreen);
                                       }
                                     },
                                     name: categoryType,

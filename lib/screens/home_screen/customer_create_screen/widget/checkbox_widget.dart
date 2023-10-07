@@ -9,10 +9,12 @@ class CheckBoxWidget extends StatelessWidget {
     super.key,
     required this.valueInCheckBox,
     required this.title,
+    required this.isDisabled,
   });
 
   final ValueNotifier<bool> valueInCheckBox;
   final String title;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +29,12 @@ class CheckBoxWidget extends StatelessWidget {
           ),
           value: valueInCheckBox.value,
           shape: const CircleBorder(),
-          onChanged: (value) {
+          onChanged:isDisabled ? null : (value) {
             valueInCheckBox.value = value ?? false;
           },
         ),
         kSizedBox4,
-        Text(title,style: getBoldStyle(color: ColorManager.primaryLight),)
+        Text(title,style: getBoldStyle(color:isDisabled ? ColorManager.grey4 : ColorManager.primaryLight),)
       ],
     );
   }

@@ -46,9 +46,9 @@ class SalesScreen extends HookWidget {
     final DateTime nowDate = DateTime.now();
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
-    Future selectDate(
+    Future selectDateWithValue(
         {TextEditingController? dateTransfer,
-        ValueNotifier? dateTransferText}) async {
+          ValueNotifier? dateTransferText}) async {
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       DateTime? picked = await showDatePicker(
         context: context,
@@ -69,15 +69,14 @@ class SalesScreen extends HookWidget {
         },
       );
       if (picked != null) {
-       if( dateTransfer != null){
-         dateTransfer.text = formatter.format(picked);
-       }else{
-         invoiceTimeStamp.value = picked;
-         dateTransferText?.value = formatter.format(picked);
-       }
+        if( dateTransfer != null){
+          dateTransfer.text = formatter.format(picked);
+        }else{
+          invoiceTimeStamp.value = picked;
+          dateTransferText?.value = formatter.format(picked);
+        }
       }
     }
-
 
     useEffect(() {
       Future.microtask(() {
@@ -129,7 +128,7 @@ class SalesScreen extends HookWidget {
                          children: [
                            Text("Invoice No",style: getBoldStyle(color: ColorManager.grey3,fontSize: FontSize.s14),),
                            kSizedBox8,
-                           Text(currentNotifier.getDisplayInvoiceID ?? "",style: getSemiBoldStyle(color: ColorManager.black,),)
+                           Text(currentNotifier.getDisplaySeriesID ?? "",style: getSemiBoldStyle(color: ColorManager.black,),)
                          ],
                          ),
       Column(
@@ -138,7 +137,7 @@ class SalesScreen extends HookWidget {
                 kSizedBox8,
                 InkWell(
                     onTap: () {
-                  selectDate(dateTransferText: invoiceDateController);
+                      selectDateWithValue(dateTransferText: invoiceDateController);
                 },
                 child: Text(invoiceDateController.value,style: getSemiBoldStyle(color: ColorManager.black,),))
         ],
@@ -324,8 +323,8 @@ class SalesScreen extends HookWidget {
                               currentNotifier.setSalesFirstData(
                                 user: profileNotifier.getProfile?.result?[0].userId ?? 0,
                                 date: invoiceTimeStamp.value,
-                                invoiceId: int.parse(seriesFetchNotifier.getSeriesFetch ?? "0"),
-                                displayInvoiceId: currentNotifier.getDisplayInvoiceID ?? "",
+                                // invoiceId: int.parse(seriesFetchNotifier.getSeriesFetch ?? "0"),
+                                // displayInvoiceId: currentNotifier.getDisplaySeriesID ?? "",
                                 printType: "thermal",
                                 soldTo: selectedCustomerID.value, soldToName: customerController.text.split(" ").first,
                                 poNumber: poNumberController.text,
