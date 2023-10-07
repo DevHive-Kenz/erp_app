@@ -153,7 +153,7 @@ class TotalInvoice extends HookWidget {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data?.id.toString() ?? "0")}",style: getBoldStyle(color: ColorManager.black,),) ,
+                                        Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data?.invoiceId.toString() ?? "0")}",style: getBoldStyle(color: ColorManager.black,),) ,
                                         Text(dateFormatter.format(data?.date ?? DateTime.now()),style: getBoldStyle(color: ColorManager.black,),) ,
                                       ],
                                     ),
