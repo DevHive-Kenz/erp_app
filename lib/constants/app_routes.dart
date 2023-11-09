@@ -10,6 +10,7 @@ import '../screens/home_screen/settings/bluetooth_printer_setup_screen.dart';
 import '../screens/home_screen/settings/printer_settings_screen.dart';
 import '../screens/home_screen/settings/settings_screen.dart';
 import '../screens/home_screen/total_invoice/total_invoice_screen.dart';
+import '../screens/home_screen/total_sales_return/total_sales_return_screen.dart';
 import '../screens/login_screen/intro.dart';
 import '../screens/login_screen/login_screen.dart';
 import '../screens/main_sceen.dart';
@@ -29,6 +30,7 @@ const String totalInvoice = "/totalInvoice";
 const String customerCreateScreen = "/customerCreateScreen";
 const String salesReturnScreen = "/salesReturnScreen";
 const String invoicePrintingScreen = "/invoicePrintingScreen";
+const String totalSalesReturnInvoice = "/totalSalesReturnInvoice";
 
 
 
@@ -49,5 +51,6 @@ final routes = {
   customerCreateScreen: (context) =>  const CustomerCRUDScreen(),
   salesReturnScreen: (context) =>  const SalesReturnScreen(),
   invoicePrintingScreen: (context) =>   InvoicePrintingScreen(),
+  totalSalesReturnInvoice: (context) =>   TotalSalesReturnInvoice(),
 
 };

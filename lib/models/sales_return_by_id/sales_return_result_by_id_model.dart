@@ -6,10 +6,10 @@ import '../customer_model/customer_result_model.dart';
 import '../total_invoice_model/total_invoice_items_model.dart';
 
 
-part 'sales_return_result_model.g.dart';
+part 'sales_return_result_by_id_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class SalesReturnResultModel {
+class SalesReturnByIdResultModel {
   final int? id;
   @JsonKey(name: "user_id")final int? userId;
   @JsonKey(name: "sold_to_id")final int? soldToId;
@@ -17,7 +17,7 @@ class SalesReturnResultModel {
   @JsonKey(name: "print_type")final String? printType;
   @JsonKey(name: "image_file")final String? imageFile;
   @JsonKey(name: "document_file")final String? documentFile;
-  @JsonKey(name: "sale_return_id")final int? salesReturnId;
+  @JsonKey(name: "invoice_id")final int? invoiceId;
   @JsonKey(name: "payment_type")final String? paymentType;
   @JsonKey(name: "amount")final num? amount;
   @JsonKey(name: "total_tax")final num? totalTax;
@@ -32,7 +32,7 @@ class SalesReturnResultModel {
   @JsonKey(name: "approved_by")final String? approvedBy;
   @JsonKey(name: "customer_data")final CustomerResultModel? customerData;
   final List<TotalInvoiceItemsModel>? items;
-  SalesReturnResultModel(
+  SalesReturnByIdResultModel(
       {this.id,
       this.userId,
         this.branchID, this.customerData,
@@ -40,7 +40,7 @@ class SalesReturnResultModel {
       this.printType,
       this.imageFile,
       this.documentFile,
-      this.salesReturnId,
+      this.invoiceId,
       this.paymentType,
       this.amount,
       this.totalTax,
@@ -57,7 +57,7 @@ class SalesReturnResultModel {
     });
 
 
-  factory SalesReturnResultModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesReturnResultModelFromJson(json);
-  Map<String, dynamic> toJson() => _$SalesReturnResultModelToJson(this);
+  factory SalesReturnByIdResultModel.fromJson(Map<String, dynamic> json) =>
+      _$SalesReturnByIdResultModelFromJson(json);
+  Map<String, dynamic> toJson() => _$SalesReturnByIdResultModelToJson(this);
 }

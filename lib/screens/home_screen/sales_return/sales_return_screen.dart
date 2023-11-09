@@ -15,7 +15,7 @@ import 'package:kenz_app/screens/widget/Circular_progress_indicator_widget.dart'
 import 'package:kenz_app/screens/widget/rounded_button_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/app_routes.dart';
-import '../../../core/notifier/sales_return/sales_return_notifier.dart';
+import '../../../core/notifier/sales_return/sales_return_by_id_notifier.dart';
 import '../../../models/customer_model/customer_result_model.dart';
 import '../../../provider/current_sale_notifier.dart';
 import '../../../provider/search_notifier.dart';
@@ -104,7 +104,7 @@ class SalesReturnScreen extends HookWidget {
 
 
                           kSizedBox20,
-                          Consumer<SalesReturnNotifier>(
+                          Consumer<SalesReturnByIdNotifier>(
                             builder: (context, snapshot,_) {
                               return snapshot.getIsLoading ? const CircularProgressIndicatorWidget() : Center(
                                 child: CustomButton(onTap: (){

@@ -11,45 +11,42 @@ import '../../../models/sales_return_by_id/sales_return_result_by_id_model.dart'
 import '../../../models/sales_return_model/sales_return_model.dart';
 import '../../../models/sales_return_model/sales_return_result_model.dart';
 import '../../../provider/general_notifier.dart';
-import '../../../provider/search_notifier.dart';
-import '../../api/sales_api/sales_return/sales_return_api.dart';
 import '../../api/sales_api/sales_return/sales_return_by_id_api.dart';
 
 
 
 
-class SalesReturnNotifier extends ChangeNotifier {
-  final SalesReturnApi _salesReturnApi = SalesReturnApi();
+class SalesReturnByIdNotifier extends ChangeNotifier {
+  final SalesReturnByIdApi _salesReturnApi = SalesReturnByIdApi();
 
   bool _isLoading = false;
   int? _statusCode;
-  SalesReturnModel? _salesReturnModelData;
+  SalesReturnByIDModel? _salesReturnModelData;
+  SalesReturnByIdResultModel? _salesReturnData;
 
   bool get getIsLoading => _isLoading;
   int? get getStatusCode => _statusCode;
-  SalesReturnModel? get getSalesReturnModelData => _salesReturnModelData;
+  SalesReturnByIDModel? get getSalesReturnModelData => _salesReturnModelData;
+  SalesReturnByIdResultModel? get getSalesReturnData =>_salesReturnData;
 
 
 
-  Future<String?> salesReturnList({
+  Future<String?> salesReturn({
     required BuildContext context,
+    required String invoiceNumber,
   }) async {
     try {
-      final searchNotifier = context.read<SearchProvider>();
-      searchNotifier.cleanSearchString();
-
-
       _isLoading = true;
       notifyListeners();
       // final generalNotifier = context.read<GeneralNotifier>();
 
-      final listData = await _salesReturnApi.salesReturn();
+      final listData = await _salesReturnApi.salesReturnById(invoiceNumber: invoiceNumber);
 
       if(listData["status"] == 200){
         print("1111");
-        _salesReturnModelData = SalesReturnModel.fromJson(listData);
-        searchNotifier.initializeTotalSaleReturnList(_salesReturnModelData?.result ?? []);
-
+        _salesReturnModelData = SalesReturnByIDModel.fromJson(listData);
+        print("2222");
+        _salesReturnData = _salesReturnModelData?.result;
         // _salesReturnModelData?.result?.forEach((element) {
         //   if(element.invoiceId.toString() == invoiceNumber){
         //     print("333");

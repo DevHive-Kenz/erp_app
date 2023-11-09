@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sales_return_result_model.dart';
+part of 'sales_return_result_by_id_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SalesReturnResultModel _$SalesReturnResultModelFromJson(
+SalesReturnByIdResultModel _$SalesReturnByIdResultModelFromJson(
         Map<String, dynamic> json) =>
-    SalesReturnResultModel(
+    SalesReturnByIdResultModel(
       id: json['id'] as int?,
       userId: json['user_id'] as int?,
       branchID: json['branch_id'] as int?,
@@ -20,7 +20,7 @@ SalesReturnResultModel _$SalesReturnResultModelFromJson(
       printType: json['print_type'] as String?,
       imageFile: json['image_file'] as String?,
       documentFile: json['document_file'] as String?,
-      salesReturnId: json['sale_return_id'] as int?,
+      invoiceId: json['invoice_id'] as int?,
       paymentType: json['payment_type'] as String?,
       amount: json['amount'] as num?,
       totalTax: json['total_tax'] as num?,
@@ -40,8 +40,8 @@ SalesReturnResultModel _$SalesReturnResultModelFromJson(
           .toList(),
     );
 
-Map<String, dynamic> _$SalesReturnResultModelToJson(
-        SalesReturnResultModel instance) =>
+Map<String, dynamic> _$SalesReturnByIdResultModelToJson(
+        SalesReturnByIdResultModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
@@ -50,7 +50,7 @@ Map<String, dynamic> _$SalesReturnResultModelToJson(
       'print_type': instance.printType,
       'image_file': instance.imageFile,
       'document_file': instance.documentFile,
-      'sale_return_id': instance.salesReturnId,
+      'invoice_id': instance.invoiceId,
       'payment_type': instance.paymentType,
       'amount': instance.amount,
       'total_tax': instance.totalTax,

@@ -257,7 +257,8 @@ class InvoicePrintingScreen extends HookWidget {
                                     children: [
                                       Center(child: Text( profileNotifier.getProfile?.result?[0].companyName?? "",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s18),textAlign: TextAlign.center,)),
                                       kSizedBox10,
-                                      Center(child: Text( generalNotifier.getTypeOfTransaction == Transaction.salesReturn ? "Sales Return/عائد المبيعات" :"Tax Invoice/فاتورة ضريبية",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s14),textAlign: TextAlign.center,)),
+                                      Center(child: Text( generalNotifier.getTypeOfTransaction == Transaction.salesReturn || generalNotifier.getTypeOfTransaction == Transaction.totalSalesReturn
+                                          ? "Sales Return/عائد المبيعات" :"Tax Invoice/فاتورة ضريبية",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s14),textAlign: TextAlign.center,)),
                                       kSizedBox20,
                                       Text( "${profileNotifier.getProfile?.result?[0].companyAddress1 ?? ""}, ${profileNotifier.getProfile?.result?[0].companyAddress2 ?? ""}",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize:FontSize.s9),),
                                       Text( "${profileNotifier.getProfile?.result?[0].companyAddress1Arabic ?? ""}, ${profileNotifier.getProfile?.result?[0].companyAddress2Arabic ?? ""}",style: getBoldInvoiceStyle(color: ColorManager.black,fontSize: FontSize.s9),),
@@ -547,7 +548,7 @@ class InvoicePrintingScreen extends HookWidget {
                                 width: 190,
                                 child: Column(
                                   children: [
-                                 generalNotifier.getTypeOfTransaction == Transaction.sales ?   QrImageView(
+                                 generalNotifier.getTypeOfTransaction == Transaction.sales ||  generalNotifier.getTypeOfTransaction == Transaction.totalSales ?   QrImageView(
                                       data: generateQRCodeString(sellerName: profileNotifier.getProfile?.result?[0].companyNameArabic ?? "",
                                           vatRegNo:profileNotifier.getProfile?.result?[0].companyVat ?? "",
                                           timeStamp: DateTime.now().toString(),

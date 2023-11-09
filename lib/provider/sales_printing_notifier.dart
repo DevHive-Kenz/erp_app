@@ -44,7 +44,7 @@ class InvoicePrintingNotifier extends ChangeNotifier{
 ///image
       final im.Image? image = im.decodeImage(receipt);
       final im.Image? image2 = im.decodeImage(qrCode);
-      bytes += generator.image(image!);
+      bytes += generator.imageRaster(image!,align: PosAlign.center);
       bytes += generator.imageRaster(image2!,align: PosAlign.center);
 
       return bytes;

@@ -16,13 +16,14 @@ import 'package:provider/provider.dart';
 import '../../../constants/app_routes.dart';
 import '../../../constants/font_manager.dart';
 import '../../../core/notifier/profile_notifier/profile_notifier.dart';
+import '../../../models/sales_return_model/sales_return_result_model.dart';
 import '../../../models/total_invoice_model/total_invoice_result_model.dart';
 import '../../../provider/current_sale_notifier.dart';
 import '../../../provider/sales_printing_notifier.dart';
 import '../../widget/Circular_progress_indicator_widget.dart';
 
-class TotalInvoice extends HookWidget {
-  const TotalInvoice({super.key});
+class TotalSalesReturnInvoice extends HookWidget {
+  const TotalSalesReturnInvoice({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ class TotalInvoice extends HookWidget {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                MainAppBarWidget(isFirstPage: false,title: "Total Invoice",),
+                MainAppBarWidget(isFirstPage: false,title: "Total Sale return",),
                 kSizedBox20,
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
@@ -75,7 +76,7 @@ class TotalInvoice extends HookWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Recent Invoice',style: getBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s18),),
+                        Text('Recent Sales Return',style: getBoldStyle(color: ColorManager.primaryLight,fontSize: FontSize.s18),),
                         InkWell(
                             onTap: (){
                               showDialog(
@@ -83,7 +84,7 @@ class TotalInvoice extends HookWidget {
                                 builder: (context) => AlertDialog(
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                   title: Text(
-                                   "Please Select Date Range",
+                                    "Please Select Date Range",
                                     style: getSemiBoldStyle(
                                         color: ColorManager.black, fontSize: FontSize.s16),
                                   ),
@@ -109,13 +110,12 @@ class TotalInvoice extends HookWidget {
                                             print("ddd");
                                             context.read<SearchProvider>().setStartAndEndDate(endDate: DateTime.parse(toController.text),startDate: DateTime.parse(fromController.text));
                                             Navigator.pop(context);
-
                                           }else{
                                             showSnackBar(context: context, text: "Please select both dates");
                                           }
                                         },
                                         child: Text(
-                                         "Search",
+                                          "Search",
                                           style: getSemiBoldStyle(
                                               color: ColorManager.primaryLight, fontSize: FontSize.s16),
                                         )),
@@ -130,70 +130,70 @@ class TotalInvoice extends HookWidget {
                 ),
                 kSizedBox20,
                 Consumer<SearchProvider>(
-                  builder: (context, snapshot,_) {
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
-                        child: ListView.separated(
-                          itemCount: snapshot.getInvoiceList.reversed.length,
-                         shrinkWrap: true,
-                          separatorBuilder: (BuildContext context, int index) =>  kSizedBox8,
-                          itemBuilder: (BuildContext context, int index) {
-                            TotalInvoiceResultModel? data = snapshot.getInvoiceList.reversed.toList()[index];
-                            return InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  color: ColorManager.filledColor2,
+                    builder: (context, snapshot,_) {
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+                          child: ListView.separated(
+                            itemCount: snapshot.getSalesReturnList.reversed.length,
+                            shrinkWrap: true,
+                            separatorBuilder: (BuildContext context, int index) =>  kSizedBox8,
+                            itemBuilder: (BuildContext context, int index) {
+                              SalesReturnResultModel? data = snapshot.getSalesReturnList.reversed.toList()[index];
+                              return InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    color: ColorManager.filledColor2,
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: AppPadding.p16,vertical: AppPadding.p12),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(data?.customerData?.name ?? "",style: getBoldStyle(color: ColorManager.black,fontSize: FontSize.s14),) ,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("${profileNotifier.getProfile?.result?[0].companySaleReturnPrefix} ${formatString(data?.salesReturnId.toString() ?? "0")}",style: getBoldStyle(color: ColorManager.black,),) ,
+                                          Text(dateFormatter.format(data?.date ?? DateTime.now()),style: getBoldStyle(color: ColorManager.black,),) ,
+                                        ],
+                                      ),
+                                      Text("${data?.amount} SAR",style: getBoldStyle(color: ColorManager.black,),),
+                                      data?.customerData != null ?  Align(
+                                          alignment: Alignment.centerRight,
+                                          child: CustomButton(onTap: () async {
+                                            // print(data!.date!);
+                                            productsNotifier.setSalesFirstData(
+                                              user: profileNotifier.getProfile?.result?[0].userId ?? 0,
+                                              date: data!.date!,
+                                              printType: "thermal",
+                                              soldTo: data.soldToId,
+                                              soldToName: data.customerData!.name!,
+                                              poNumber:data.referenceNumber,
+                                              poDate: data.supplyDate,
+                                              dataCustomer: data.customerData!,
+                                            );
+                                            productsNotifier.setInvoiceID(invoiceId: data.salesReturnId ?? 0, displaySeriesId: "${profileNotifier.getProfile?.result?[0].companySaleReturnPrefix} ${formatString(data.salesReturnId.toString())}");
+                                            productsNotifier.setRecentProductList=data.items ?? [];
+                                            isLoading.value = true;
+                                            Navigator.pushNamed(context, invoicePrintingScreen);
+                                            isLoading.value = false;
+                                          }, title: "Print",width: 80.w,height: 35.h,)):kSizedBox
+                                    ],
+                                  ),
                                 ),
-                                padding: EdgeInsets.symmetric(horizontal: AppPadding.p16,vertical: AppPadding.p12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(data?.customerData?.name ?? "",style: getBoldStyle(color: ColorManager.black,fontSize: FontSize.s14),) ,
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data?.invoiceId.toString() ?? "0")}",style: getBoldStyle(color: ColorManager.black,),) ,
-                                        Text(dateFormatter.format(data?.date ?? DateTime.now()),style: getBoldStyle(color: ColorManager.black,),) ,
-                                      ],
-                                    ),
-                                    Text("${data?.amount} SAR",style: getBoldStyle(color: ColorManager.black,),),
-                                    Align(
-                                        alignment: Alignment.centerRight,
-                                        child: CustomButton(onTap: () async {
-                                          // print(data!.date!);
-                                          productsNotifier.setSalesFirstData(
-                                            user: profileNotifier.getProfile?.result?[0].userId ?? 0,
-                                            date: data!.date!,
-                                            printType: "thermal",
-                                            soldTo: data.soldToId,
-                                            soldToName: data.customerData!.name!,
-                                            poNumber:data.referenceNumber,
-                                            poDate: data.supplyDate,
-                                            dataCustomer: data.customerData!,
-                                          );
-                                          productsNotifier.setInvoiceID(invoiceId: data.invoiceId ?? 0, displaySeriesId: "${profileNotifier.getProfile?.result?[0].companySalePrefix} ${formatString(data.invoiceId.toString())}");
-                                          productsNotifier.setRecentProductList=data.items ?? [];
-                                          isLoading.value = true;
-                                         Navigator.pushNamed(context, invoicePrintingScreen);
-                                          isLoading.value = false;
-                                        }, title: "Print",width: 80.w,height: 35.h,))
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
                 ),
                 kSizedBox20,
 
               ],
             ),
-          isLoading.value ?  Positioned.fill(
+            isLoading.value ?  Positioned.fill(
                 child: Align(
                     alignment: Alignment.centerRight,
                     child: Container(

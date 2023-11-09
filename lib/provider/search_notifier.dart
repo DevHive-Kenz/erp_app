@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/customer_model/customer_result_model.dart';
 import '../models/product_model/product_result_model.dart';
+import '../models/sales_return_model/sales_return_result_model.dart';
 import '../models/total_invoice_model/total_invoice_result_model.dart';
 
 class SearchProvider extends ChangeNotifier {
@@ -14,6 +15,7 @@ class SearchProvider extends ChangeNotifier {
   List<CustomerResultModel> _customerList = [];
   List<ProductResultModel> _productList = [];
   List<TotalInvoiceResultModel> _totalInvoiceList = [];
+  List<SalesReturnResultModel> _totalSaleReturnList = [];
 
 
   UnmodifiableListView get getCustomerList=> _searchString.isEmpty
@@ -29,7 +31,12 @@ class SearchProvider extends ChangeNotifier {
   UnmodifiableListView get getInvoiceList=> _startDate == null && _endDate ==null
       ? UnmodifiableListView(_totalInvoiceList)
       : UnmodifiableListView(_totalInvoiceList.where((value) =>
-  value.date!.isAtSameMomentAs(_startDate!)||value.date!.isAtSameMomentAs(_endDate!)||(value.date!.isAfter(_startDate!) && value.date!.isBefore(_endDate!.add(Duration(days: 1))))));
+  value.date!.isAtSameMomentAs(_startDate!)||value.date!.isAtSameMomentAs(_endDate!)||(value.date!.isAfter(_startDate!) && value.date!.isBefore(_endDate!.add(const Duration(days: 1))))));
+
+  UnmodifiableListView get getSalesReturnList=> _startDate == null && _endDate ==null
+      ? UnmodifiableListView(_totalSaleReturnList)
+      : UnmodifiableListView(_totalSaleReturnList.where((value) =>
+  value.date!.isAtSameMomentAs(_startDate!)||value.date!.isAtSameMomentAs(_endDate!)||(value.date!.isAfter(_startDate!) && value.date!.isBefore(_endDate!.add(const Duration(days: 1))))));
 
 
 
@@ -69,6 +76,12 @@ class SearchProvider extends ChangeNotifier {
   void initializeTotalList(  List<TotalInvoiceResultModel>? list ){
     _searchString = "";
     _totalInvoiceList=list!;
+    notifyListeners();
+  }
+  void initializeTotalSaleReturnList(  List<SalesReturnResultModel>? list ){
+    _searchString = "";
+    print("dddddddddddddddddddddd ${list?.length}");
+    _totalSaleReturnList=list!;
     notifyListeners();
   }
 }

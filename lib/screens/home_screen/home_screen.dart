@@ -13,6 +13,7 @@ import 'package:kenz_app/screens/widget/square_tile_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/values_manger.dart';
 import '../../constants/app_routes.dart';
+import '../../core/notifier/sales_return/sales_return_notifier.dart';
 import '../../provider/current_sale_notifier.dart';
 import '../widget/Circular_progress_indicator_widget.dart';
 import '../../core/notifier/product_notifier/product_notifier.dart';
@@ -87,10 +88,10 @@ class HomeScreen extends HookWidget {
                                 crossAxisCount: generalNotifier.getAxisCount,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                children: List.generate(4, (index) {
-                                  String categoryType = index ==0 ? "Sales":index == 1 ? "Sales Return":index == 2 ? "Total Invoice":index == 3 ? "Create\nCustomer":"Add";
+                                children: List.generate(5, (index) {
+                                  String categoryType = index ==0 ? "Sales":index == 1 ?  "Total Invoice":index == 2 ? "Sales Return" :index == 3 ? "Total sales \n return":index == 4 ? "Create\nCustomer":"Add";
                                   return SquareTileWidget(
-                                    icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.assignment_return_rounded :index == 2 ? Icons.receipt_long_rounded:index == 3 ? Icons.person:Icons.add,
+                                    icon: index ==0 ? Icons.point_of_sale_rounded :index == 1 ? Icons.receipt_long_rounded:index == 2 ? Icons.assignment_return_rounded :index == 3 ? Icons.featured_play_list_rounded:index == 4 ? Icons.person :Icons.add,
                                     index: index,
                                     onTap: () async {
                                       print(index);
@@ -101,25 +102,32 @@ class HomeScreen extends HookWidget {
                                         isLoading.value = false;
                                           Navigator.pushNamed(context, sales);
                                       }else if (index == 1){
-                                        currentNotifier.clearAll();
-
-                                        generalNotifier.setTypeOfTransaction= Transaction.salesReturn;
-                                        isLoading.value = true;
-                                        await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE_RETURN");
-                                        isLoading.value = false;
-                                        Navigator.pushNamed(context, salesReturnScreen);
-                                      }else if (index == 2){
                                         generalNotifier.setTypeOfTransaction= Transaction.totalSales;
                                         isLoading.value = true;
                                         await context.read<TotalInvoiceNotifier>().totalInvoiceFetch(context: context).then((value){
                                           if(value == "OK"){
                                             Navigator.pushNamed(context, totalInvoice);
                                           }
-
+                                        });
+                                        isLoading.value = false;
+                                      }else if (index == 2){
+                                        currentNotifier.clearAll();
+                                        generalNotifier.setTypeOfTransaction= Transaction.salesReturn;
+                                        isLoading.value = true;
+                                        await context.read<SeriesFetchNotifier>().seriesFetch(context: context, type: "INVOICE_RETURN");
+                                        isLoading.value = false;
+                                        Navigator.pushNamed(context, salesReturnScreen);
+                                      }else if(index == 3){
+                                        generalNotifier.setTypeOfTransaction= Transaction.totalSalesReturn;
+                                        isLoading.value = true;
+                                        await context.read<SalesReturnNotifier>().salesReturnList(context: context).then((value){
+                                          if(value == "OK"){
+                                            Navigator.pushNamed(context, totalSalesReturnInvoice);
+                                          }
                                         });
                                         isLoading.value = false;
 
-                                      }else if(index == 3){
+                                      }else if(index == 4){
                                         Navigator.pushNamed(context, customerCreateScreen);
                                       }
                                     },

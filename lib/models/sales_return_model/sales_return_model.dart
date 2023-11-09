@@ -11,7 +11,6 @@ class SalesReturnModel {
   final List<SalesReturnResultModel>? result;
   SalesReturnModel({this.result, this.status});
 
-
   factory SalesReturnModel.fromJson(Map<String, dynamic> json) =>
       _$SalesReturnModelFromJson(json);
   Map<String, dynamic> toJson() => _$SalesReturnModelToJson(this);
