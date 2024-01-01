@@ -448,7 +448,7 @@ class SalesItemAddingScreen extends HookWidget {
                               AwesomeDialog(
                                   dismissOnTouchOutside: true,
                                   context: context,
-                                  dialogType: DialogType.QUESTION,
+                                  dialogType: DialogType.question,
                                   animType: AnimType.BOTTOMSLIDE,
 
                                   title: "Confirmation",

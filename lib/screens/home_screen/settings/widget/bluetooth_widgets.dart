@@ -108,7 +108,7 @@ class _ScanResultTileState extends State<ScanResultTile> {
             (widget.result.advertisementData.serviceUuids.isNotEmpty)
                 ? widget.result.advertisementData.serviceUuids.join(', ').toUpperCase()
                 : 'N/A'),
-        _buildAdvRow(context, 'Service Data', getNiceServiceData(widget.result.advertisementData.serviceData)),
+
       ],
     );
   }

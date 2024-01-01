@@ -53,7 +53,7 @@ class SettingsScreen extends StatelessWidget {
                   AwesomeDialog(
                       dismissOnTouchOutside: true,
                       context: context,
-                      dialogType: DialogType.QUESTION,
+                      dialogType: DialogType.question,
                       animType: AnimType.BOTTOMSLIDE,
 
                       title: "Confirmation",
